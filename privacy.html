@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy, Deuce</title>
+<meta name="description" content="Deuce privacy policy.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --clay: #C4582E; --clay-deep: #9E4421; --clay-soft: #F0DCCF;
+    --cream: #F4EDE1; --paper: #FBF6EC; --green: #1E3D2F; --sand: #EFE6D6; --ink: #15130F;
+    --ink-soft: rgba(21,19,15,0.62); --line: rgba(21,19,15,0.16); --line-soft: rgba(21,19,15,0.08);
+    --serif: 'Libre Caslon Display', Georgia, serif;
+    --sans: 'Spline Sans', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--ink); background: var(--cream); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px clamp(20px, 4vw, 56px); border-bottom: 1px solid var(--line-soft); background: var(--cream); position: sticky; top: 0; z-index: 50; }
+  .wordmark { font-family: var(--serif); font-size: 26px; letter-spacing: 0.02em; text-decoration: none; color: var(--green); display:flex; align-items:center; gap:10px; }
+  .wordmark .mk { width: 15px; height: 15px; position: relative; display:inline-block; }
+  .wordmark .mk::before { content:''; position:absolute; inset:0; border:2px solid var(--clay); border-radius:999px; }
+  .wordmark .mk::after { content:''; position:absolute; left:50%; top:0; bottom:0; width:2px; background:var(--clay); transform:translateX(-50%); }
+  .navlinks { display: flex; gap: clamp(14px, 2.4vw, 32px); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; }
+  .navlinks a { text-decoration: none; transition: color 0.2s; }
+  .navlinks a:hover { color: var(--clay); }
+  @media (max-width: 760px) { .navlinks { display: none; } }
+
+  .policy-hero { padding: clamp(56px, 10vw, 120px) clamp(20px, 4vw, 56px) clamp(40px, 6vw, 80px); text-align: center; background: var(--paper); border-bottom: 1px solid var(--line-soft); }
+  .policy-eyebrow { font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--clay); font-weight: 600; margin-bottom: 18px; }
+  .policy-title { font-family: var(--serif); font-weight: 400; font-size: clamp(44px, 7vw, 88px); line-height: 0.98; letter-spacing: -0.01em; color: var(--green); }
+  .policy-updated { font-size: 12px; color: var(--ink-soft); margin-top: 16px; letter-spacing: 0.06em; }
+
+  .policy { max-width: 760px; margin: 0 auto; padding: clamp(48px, 6vw, 96px) clamp(20px, 4vw, 32px) clamp(72px, 9vw, 140px); }
+  .policy h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 2.8vw, 36px); line-height: 1.15; margin: clamp(36px, 5vw, 56px) 0 clamp(16px, 2vw, 24px); color: var(--green); }
+  .policy h2:first-child { margin-top: 0; }
+  .policy h3 { font-family: var(--sans); font-weight: 600; font-size: 16px; letter-spacing: 0.04em; margin: 28px 0 10px; color: var(--ink); }
+  .policy p { font-size: 15px; color: var(--ink); margin-bottom: 14px; line-height: 1.75; }
+  .policy ul { margin: 0 0 18px 22px; padding: 0; }
+  .policy li { font-size: 15px; line-height: 1.75; margin-bottom: 6px; }
+  .policy address { font-style: normal; padding: 18px 22px; background: var(--sand); border-left: 2px solid var(--clay); margin: 16px 0; font-size: 14px; line-height: 1.7; }
+  .policy a { color: var(--clay-deep); text-decoration: underline; text-underline-offset: 3px; }
+
+  footer { background: var(--green); color: var(--cream); padding: clamp(56px, 7vw, 96px) clamp(20px, 4vw, 56px) 32px; }
+  .foot-grid { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: clamp(32px, 5vw, 80px); padding-bottom: 48px; border-bottom: 1px solid rgba(244,237,225,0.18); }
+  @media (max-width: 880px) { .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+  .foot-mark { font-family: var(--serif); font-size: 34px; margin-bottom: 16px; }
+  .foot-blurb { font-size: 13px; line-height: 1.7; color: rgba(244,237,225,0.62); max-width: 320px; }
+  .foot-h { font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--clay-soft); margin-bottom: 16px; font-weight: 600; }
+  .foot-list { list-style: none; display: flex; flex-direction: column; gap: 9px; padding: 0; }
+  .foot-list a { font-size: 13px; color: rgba(244,237,225,0.78); text-decoration: none; transition: color 0.2s; }
+  .foot-list a:hover { color: var(--cream); }
+  .foot-bottom { max-width: 1280px; margin: 24px auto 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 11px; color: rgba(244,237,225,0.5); letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="wordmark"><span class="mk"></span>Deuce</a>
+  <nav class="navlinks">
+    <a href="index.html#circulation">Circulation</a>
+    <a href="index.html#oncourt">On Court</a>
+    <a href="index.html#promise">The Clubhouse</a>
+  </nav>
+</header>
+
+<section class="policy-hero">
+  <p class="policy-eyebrow">Legal</p>
+  <h1 class="policy-title">Privacy Policy</h1>
+  <p class="policy-updated">Last updated: January 2026</p>
+</section>
+
+<article class="policy">
+
+  <p>PLACEHOLDER LLC ("we", "us", "our") is committed to protecting your personal data in compliance with applicable United States federal and state privacy laws, including the California Consumer Privacy Act (CCPA). This Policy describes how we process your personal data when you visit deuce.shop ("Website") or purchase our products.</p>
+
+  <h2>1. Company Information</h2>
+
+  <address>
+    PLACEHOLDER LLC<br>
+    123 Main Street<br>
+    Placeholder, State 10101<br>
+    United States<br>
+    Email: <a href="mailto:help@deuce.com">help@deuce.com</a>
+  </address>
+
+  <h2>2. Personal Data We Collect</h2>
+
+  <p>We may process the following categories of personal data:</p>
+
+  <ul>
+    <li>Identity and contact data - name, email address, phone number, billing/shipping address.</li>
+    <li>Payment authorisation tokens - managed securely by our payment provider (we do not store full card numbers).</li>
+    <li>Technical data - IP address, browser data, device information, cookie identifiers.</li>
+    <li>Communication data - messages sent to our support team.</li>
+  </ul>
+
+  <h2>3. Why We Process Your Data</h2>
+
+  <p>We process personal data for:</p>
+
+  <ul>
+    <li>Performance of contract - to fulfil orders, process payments, and provide customer support.</li>
+    <li>Legal obligations - accounting, reporting, and compliance with consumer protection and tax laws.</li>
+    <li>Consent - where required for analytics or marketing communications.</li>
+  </ul>
+
+  <h2>4. Data Sharing</h2>
+
+  <p>We may share personal data with:</p>
+
+  <ul>
+    <li>Payment processors</li>
+    <li>Fulfilment and shipping partners</li>
+    <li>IT/security providers</li>
+    <li>Customer support systems</li>
+  </ul>
+
+  <p>All third parties operate under data-processing agreements consistent with applicable privacy law.</p>
+
+  <h2>5. Data Retention</h2>
+
+  <p>We retain personal data only for as long as necessary:</p>
+
+  <ul>
+    <li>Financial records - up to 7 years as required by US tax and accounting law.</li>
+    <li>Customer service records - a reasonable period for audit and quality assurance.</li>
+  </ul>
+
+  <h2>6. Cookies</h2>
+
+  <p>We use essential, functional, analytics, and marketing cookies. You may adjust cookie settings via your browser at any time.</p>
+
+  <h2>7. Your Rights</h2>
+
+  <p>Subject to applicable law, you may request:</p>
+
+  <ul>
+    <li>Access to your data</li>
+    <li>Correction of inaccurate data</li>
+    <li>Deletion of your data</li>
+    <li>Restriction or objection to processing</li>
+    <li>Data portability</li>
+    <li>Withdrawal of consent (where processing is based on consent)</li>
+  </ul>
+
+  <p>California residents have additional rights under the CCPA, including the right to know what personal information is collected, the right to delete, and the right to opt out of the sale or sharing of personal information. We do not sell your personal information.</p>
+
+  <h2>8. Contact</h2>
+
+  <p>For privacy-related matters, contact: <a href="mailto:help@deuce.com">help@deuce.com</a></p>
+
+</article>
+
+<footer>
+  <div class="foot-grid">
+    <div>
+      <div class="foot-mark">Deuce</div>
+      <p class="foot-blurb">A clubhouse tennis shop. A short, honest kit and Circulation, our blood-flow support for the long match. Shipped free across the United States over $100.</p>
+    </div>
+    <div>
+      <p class="foot-h">Shop</p>
+      <ul class="foot-list">
+        <li><a href="index.html#circulation">Circulation</a></li>
+        <li><a href="index.html#oncourt">On Court</a></li>
+        <li><a href="index.html#promise">The Clubhouse</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="foot-h">Help</p>
+      <ul class="foot-list">
+        <li><a href="shipping.html">Shipping</a></li>
+        <li><a href="returns.html">Returns</a></li>
+        <li><a href="mailto:help@deuce.com">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="foot-h">Legal</p>
+      <ul class="foot-list">
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© <span id="year"></span> PLACEHOLDER LLC</span>
+    <span>123 Main Street, Placeholder, State 10101</span>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
