@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shipping Policy, Deuce</title>
+<meta name="description" content="Deuce shipping information.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --clay: #C4582E; --clay-deep: #9E4421; --clay-soft: #F0DCCF;
+    --cream: #F4EDE1; --paper: #FBF6EC; --green: #1E3D2F; --sand: #EFE6D6; --ink: #15130F;
+    --ink-soft: rgba(21,19,15,0.62); --line: rgba(21,19,15,0.16); --line-soft: rgba(21,19,15,0.08);
+    --serif: 'Libre Caslon Display', Georgia, serif;
+    --sans: 'Spline Sans', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--ink); background: var(--cream); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px clamp(20px, 4vw, 56px); border-bottom: 1px solid var(--line-soft); background: var(--cream); position: sticky; top: 0; z-index: 50; }
+  .wordmark { font-family: var(--serif); font-size: 26px; letter-spacing: 0.02em; text-decoration: none; color: var(--green); display:flex; align-items:center; gap:10px; }
+  .wordmark .mk { width: 15px; height: 15px; position: relative; display:inline-block; }
+  .wordmark .mk::before { content:''; position:absolute; inset:0; border:2px solid var(--clay); border-radius:999px; }
+  .wordmark .mk::after { content:''; position:absolute; left:50%; top:0; bottom:0; width:2px; background:var(--clay); transform:translateX(-50%); }
+  .navlinks { display: flex; gap: clamp(14px, 2.4vw, 32px); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; }
+  .navlinks a { text-decoration: none; transition: color 0.2s; }
+  .navlinks a:hover { color: var(--clay); }
+  @media (max-width: 760px) { .navlinks { display: none; } }
+
+  .policy-hero { padding: clamp(56px, 10vw, 120px) clamp(20px, 4vw, 56px) clamp(40px, 6vw, 80px); text-align: center; background: var(--paper); border-bottom: 1px solid var(--line-soft); }
+  .policy-eyebrow { font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--clay); font-weight: 600; margin-bottom: 18px; }
+  .policy-title { font-family: var(--serif); font-weight: 400; font-size: clamp(44px, 7vw, 88px); line-height: 0.98; letter-spacing: -0.01em; color: var(--green); }
+  .policy-updated { font-size: 12px; color: var(--ink-soft); margin-top: 16px; letter-spacing: 0.06em; }
+
+  .policy { max-width: 760px; margin: 0 auto; padding: clamp(48px, 6vw, 96px) clamp(20px, 4vw, 32px) clamp(72px, 9vw, 140px); }
+  .policy h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 2.8vw, 36px); line-height: 1.15; margin: clamp(36px, 5vw, 56px) 0 clamp(16px, 2vw, 24px); color: var(--green); }
+  .policy h2:first-child { margin-top: 0; }
+  .policy h3 { font-family: var(--sans); font-weight: 600; font-size: 16px; letter-spacing: 0.04em; margin: 28px 0 10px; color: var(--ink); }
+  .policy p { font-size: 15px; color: var(--ink); margin-bottom: 14px; line-height: 1.75; }
+  .policy ul { margin: 0 0 18px 22px; padding: 0; }
+  .policy li { font-size: 15px; line-height: 1.75; margin-bottom: 6px; }
+  .policy address { font-style: normal; padding: 18px 22px; background: var(--sand); border-left: 2px solid var(--clay); margin: 16px 0; font-size: 14px; line-height: 1.7; }
+  .policy a { color: var(--clay-deep); text-decoration: underline; text-underline-offset: 3px; }
+  table.ship { width: 100%; border-collapse: collapse; margin: 16px 0 22px; font-size: 14px; }
+  table.ship th, table.ship td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line-soft); }
+  table.ship th { font-weight: 600; color: var(--green); }
+
+  footer { background: var(--green); color: var(--cream); padding: clamp(56px, 7vw, 96px) clamp(20px, 4vw, 56px) 32px; }
+  .foot-grid { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: clamp(32px, 5vw, 80px); padding-bottom: 48px; border-bottom: 1px solid rgba(244,237,225,0.18); }
+  @media (max-width: 880px) { .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+  .foot-mark { font-family: var(--serif); font-size: 34px; margin-bottom: 16px; }
+  .foot-blurb { font-size: 13px; line-height: 1.7; color: rgba(244,237,225,0.62); max-width: 320px; }
+  .foot-h { font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--clay-soft); margin-bottom: 16px; font-weight: 600; }
+  .foot-list { list-style: none; display: flex; flex-direction: column; gap: 9px; padding: 0; }
+  .foot-list a { font-size: 13px; color: rgba(244,237,225,0.78); text-decoration: none; transition: color 0.2s; }
+  .foot-list a:hover { color: var(--cream); }
+  .foot-bottom { max-width: 1280px; margin: 24px auto 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 11px; color: rgba(244,237,225,0.5); letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="wordmark"><span class="mk"></span>Deuce</a>
+  <nav class="navlinks">
+    <a href="index.html#circulation">Circulation</a>
+    <a href="index.html#oncourt">On Court</a>
+    <a href="index.html#promise">The Clubhouse</a>
+  </nav>
+</header>
+
+<section class="policy-hero">
+  <p class="policy-eyebrow">Help</p>
+  <h1 class="policy-title">Shipping</h1>
+  <p class="policy-updated">Last updated: January 2026</p>
+</section>
+
+<article class="policy">
+
+  <p>At Deuce, we aim to process and deliver your order as quickly and reliably as possible. Please review our shipping terms below.</p>
+
+  <h2>Order Processing Time</h2>
+
+  <p>All orders are processed within 1 business day after successful payment confirmation (excluding weekends and US public holidays). Once your order has been processed and dispatched, you will receive a shipment confirmation email with tracking.</p>
+
+  <h2>Delivery Timeframes</h2>
+
+  <p>We ship orders using trusted carrier partners, USPS, UPS, and FedEx. The shipping carrier is selected automatically based on your delivery location and operational availability.</p>
+
+  <p>Estimated delivery times after dispatch:</p>
+
+  <table class="ship">
+    <thead>
+      <tr>
+        <th>Region</th>
+        <th>Estimated Delivery</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Continental United States</td><td>4-7 business days</td></tr>
+      <tr><td>Alaska &amp; Hawaii</td><td>7-10 business days</td></tr>
+      <tr><td>US Territories (PR, GU, etc.)</td><td>10-14 business days</td></tr>
+    </tbody>
+  </table>
+
+  <p>Delivery times are estimates and may vary due to carrier operations, public holidays, or circumstances beyond our control.</p>
+
+  <h2>Shipping Fees</h2>
+
+  <p>Deuce offers <strong>free standard shipping on US orders over $100</strong>. Orders below $100 carry a flat $7.99 standard shipping fee. Expedited shipping options, where available, are displayed at checkout and apply only to the specific offer selected at the time of purchase. All applicable shipping costs are shown before payment is completed.</p>
+
+  <h2>International Shipping</h2>
+
+  <p>Deuce ships within the United States only. We hope to open international shipping in the future, sign up at checkout for early access.</p>
+
+  <h2>Failed or Delayed Deliveries</h2>
+
+  <p>If your order has not been delivered within the estimated delivery timeframe, please contact our customer support team. If an order is confirmed as lost in transit or cannot be delivered, you may request a full refund in accordance with applicable consumer protection laws.</p>
+
+  <h2>Incorrect Address Information</h2>
+
+  <p>Customers are responsible for providing accurate and complete shipping details at checkout. We are not responsible for delivery delays or non-delivery caused by incorrect or incomplete address information. If a parcel is returned to us due to an undeliverable address, we will contact you to arrange re-shipment at the original shipping cost.</p>
+
+  <h2>Contact Us</h2>
+
+  <p>If you have any questions regarding shipping or delivery, please contact our customer support team at <a href="mailto:help@deuce.com">help@deuce.com</a>.</p>
+
+</article>
+
+<footer>
+  <div class="foot-grid">
+    <div>
+      <div class="foot-mark">Deuce</div>
+      <p class="foot-blurb">A clubhouse tennis shop. A short, honest kit and Circulation, our blood-flow support for the long match. Shipped free across the United States over $100.</p>
+    </div>
+    <div>
+      <p class="foot-h">Shop</p>
+      <ul class="foot-list">
+        <li><a href="index.html#circulation">Circulation</a></li>
+        <li><a href="index.html#oncourt">On Court</a></li>
+        <li><a href="index.html#promise">The Clubhouse</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="foot-h">Help</p>
+      <ul class="foot-list">
+        <li><a href="shipping.html">Shipping</a></li>
+        <li><a href="returns.html">Returns</a></li>
+        <li><a href="mailto:help@deuce.com">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="foot-h">Legal</p>
+      <ul class="foot-list">
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© <span id="year"></span> PLACEHOLDER LLC</span>
+    <span>123 Main Street, Placeholder, State 10101</span>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
