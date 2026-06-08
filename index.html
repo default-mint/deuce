@@ -10,17 +10,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ───────────────────────────────────────────────
-     DEUCE - Court Report Filmstrip (restyle)
-     Layout structure reused from Baseline per explicit
-     user request (the no-repeat-layout rule is waived for
-     STRUCTURE only): 3 stacked banners, sticky nav with live
-     cart count, full-bleed hero, supplement spotlight band,
-     horizontal scroll-snap category filmstrip, product modal,
-     right cart drawer + localStorage + toast. 100% restyled.
+     DEUCE - The Clubhouse Quarterly (editorial spread)
+     A long-form magazine feature, not a shop row. A
+     restrained masthead opens the issue, then editorial
+     sections alternate with product placements: an opening
+     essay, "The Kit" editorial grid (captions + price +
+     quick-add, NOT a scroll-snap strip), a mid-page feature
+     article on Circulation with its three priced tiers and
+     add-to-bag inline, and a closing clubhouse note. Pull
+     quotes, drop caps, multi-column type, generous rules.
 
-     Design intent: a composed, clubhouse tennis shop with a
-     clay-court heritage feel. Backgrounds are never flat
-     (court-clay washes + canvas texture rules).
+     Same data + components as before: 3 stacked banners,
+     sticky nav with live cart count, product modal, right
+     cart drawer + localStorage + toast.
      Palette: clay #C4582E, cream #F4EDE1, deep court green
      #1E3D2F, sand wash #EFE6D6, ink #15130F.
      Type: Libre Caslon Display (display) + Spline Sans (body).
@@ -98,15 +100,15 @@
   .nav {
     position: sticky; top: 0; z-index: 50;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 16px clamp(18px, 4vw, 56px);
-    background: rgba(244, 237, 225, 0.9);
+    padding: 14px clamp(18px, 4vw, 56px);
+    background: rgba(244, 237, 225, 0.92);
     backdrop-filter: saturate(140%) blur(10px);
     -webkit-backdrop-filter: saturate(140%) blur(10px);
-    border-bottom: 1px solid var(--line-soft);
+    border-bottom: 1px solid var(--line);
   }
   .wordmark {
     font-family: var(--display);
-    font-size: 27px; letter-spacing: 0.02em;
+    font-size: 26px; letter-spacing: 0.02em;
     display: flex; align-items: center; gap: 10px;
     color: var(--green);
   }
@@ -126,188 +128,237 @@
   .bag-count.empty { background: var(--line); color: var(--ink-soft); }
   @media (max-width: 820px) { .navlinks { display: none; } }
 
-  /* ───── Hero ───── */
-  .hero {
-    position: relative;
-    min-height: clamp(460px, 74vh, 680px);
-    display: flex; align-items: flex-end;
-    overflow: hidden;
+  /* ───── Editorial frame ───── */
+  .issue { max-width: 1180px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 56px); }
+  .rule { height: 1px; background: var(--line); }
+  .rule-thick { height: 3px; background: var(--ink); }
+  .rule-clay { height: 2px; background: var(--clay); }
+
+  /* ───── Masthead ───── */
+  .masthead { padding: clamp(34px, 5vw, 64px) 0 clamp(28px, 4vw, 48px); }
+  .mast-top {
+    display: flex; align-items: baseline; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+    font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; font-weight: 600;
+    color: var(--clay);
+    padding-bottom: 14px;
+  }
+  .mast-top .mast-org { color: var(--green); }
+  .mast-rules { display: flex; flex-direction: column; gap: 4px; margin: 0 0 clamp(26px,3.4vw,40px); }
+  .mast-title {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(56px, 12vw, 168px); line-height: 0.86;
+    letter-spacing: -0.02em; color: var(--green);
+    margin: clamp(18px,2.4vw,30px) 0 clamp(20px,2.6vw,30px);
+  }
+  .mast-deck {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(24px,4vw,64px);
+    align-items: end;
+  }
+  @media (max-width: 760px) { .mast-deck { grid-template-columns: 1fr; gap: 22px; } }
+  .mast-lede {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(20px, 2.6vw, 30px); line-height: 1.28; color: var(--ink);
+    font-style: italic;
+  }
+  .mast-byline {
+    font-size: 12px; letter-spacing: 0.04em; color: var(--ink-soft); line-height: 1.7;
+  }
+  .mast-byline strong { color: var(--green); font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; font-size: 11px; display:block; margin-bottom: 6px; }
+  .mast-jump { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 18px; }
+  .mast-jump a {
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600;
+    color: var(--green); border-bottom: 2px solid var(--clay); padding-bottom: 3px;
+    transition: color .2s, border-color .2s;
+  }
+  .mast-jump a:hover { color: var(--clay); }
+
+  /* ───── Generic editorial article block ───── */
+  .article { padding: clamp(48px, 6vw, 96px) 0; }
+  .art-kicker {
+    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 600;
+    color: var(--clay); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .art-kicker::before { content:''; width: 28px; height: 2px; background: var(--clay); display:inline-block; }
+  .art-h {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(34px, 5vw, 64px); line-height: 1.0; letter-spacing: -0.01em;
+    color: var(--green); margin-bottom: clamp(22px,3vw,34px); max-width: 16ch;
+  }
+
+  /* Opening essay: multi-column with drop cap */
+  .essay-body {
+    columns: 2; column-gap: clamp(28px, 4vw, 56px);
+    font-size: clamp(15px, 1.3vw, 17px); line-height: 1.78; color: var(--ink);
+  }
+  @media (max-width: 720px) { .essay-body { columns: 1; } }
+  .essay-body p { margin-bottom: 18px; break-inside: avoid; }
+  .essay-body p:first-of-type::first-letter {
+    font-family: var(--display); font-weight: 400;
+    float: left; font-size: 74px; line-height: 0.74;
+    padding: 6px 12px 0 0; color: var(--clay);
+  }
+  .pull {
+    font-family: var(--display); font-weight: 400; font-style: italic;
+    font-size: clamp(24px, 3.2vw, 38px); line-height: 1.22; color: var(--green);
+    border-top: 3px solid var(--ink); border-bottom: 1px solid var(--line);
+    padding: clamp(24px,3vw,36px) 0; margin: clamp(34px,4vw,56px) 0;
+    max-width: 22ch;
+  }
+  .pull .by { display:block; font-family: var(--body); font-style: normal; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--clay); margin-top: 16px; }
+
+  /* ───── The Kit editorial grid ───── */
+  .kit { background: var(--sand); position: relative; }
+  .kit::before {
+    content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 38px, rgba(21,19,15,0.02) 38px, rgba(21,19,15,0.02) 39px);
+  }
+  .kit > * { position: relative; z-index: 1; }
+  .kit-head { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 18px; margin-bottom: clamp(30px,4vw,48px); }
+  @media (max-width: 640px) { .kit-head { grid-template-columns: 1fr; } }
+  .kit-note { font-size: 13px; color: var(--ink-soft); max-width: 30ch; line-height: 1.7; }
+  .kit-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(20px, 2.6vw, 38px) clamp(22px, 3vw, 44px);
+  }
+  @media (max-width: 900px) { .kit-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .kit-grid { grid-template-columns: 1fr; } }
+  .kit-grid .feature { grid-column: span 1; }
+  /* first item runs as a wide editorial lead within the grid */
+  .kit-grid .lead { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(22px,3vw,44px); align-items: center; padding-bottom: clamp(10px,2vw,22px); border-bottom: 1px solid var(--line); margin-bottom: clamp(6px,1vw,12px); }
+  @media (max-width: 720px) { .kit-grid .lead { grid-template-columns: 1fr; } }
+  .kit-item { display: flex; flex-direction: column; }
+  .kit-figure {
+    position: relative; overflow: hidden; background: var(--paper);
+    border: 1px solid var(--line-soft); aspect-ratio: 4/5; cursor: pointer;
+  }
+  .kit-item.lead .kit-figure { aspect-ratio: 4/3; }
+  .kit-figure img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+  .kit-figure:hover img { transform: scale(1.05); }
+  .kit-figure .plate {
+    position: absolute; top: 12px; left: 12px;
+    font-family: var(--display); font-size: 14px; color: var(--cream);
+    background: var(--green); width: 30px; height: 30px; border-radius: 999px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .kit-add {
+    position: absolute; bottom: 0; right: 0;
+    background: var(--clay); color: var(--cream);
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
+    padding: 11px 16px;
+    transform: translateY(100%); transition: transform .26s cubic-bezier(.2,.7,.2,1);
+  }
+  .kit-figure:hover .kit-add, .kit-figure:focus-within .kit-add { transform: translateY(0); }
+  .kit-cap { padding-top: 14px; }
+  .kit-cap .cnum { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--clay); font-weight: 600; }
+  .kit-cap h3 {
+    font-family: var(--display); font-weight: 400; font-size: clamp(22px, 2.4vw, 28px);
+    line-height: 1.08; color: var(--green); margin: 6px 0 8px;
+  }
+  .kit-item.lead .kit-cap h3 { font-size: clamp(30px, 4vw, 46px); }
+  .kit-cap p { font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); }
+  .kit-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .kit-price { font-family: var(--display); font-weight: 400; font-size: 20px; color: var(--ink); }
+  .kit-quick {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
+    color: var(--green); border-bottom: 2px solid var(--clay); padding-bottom: 2px;
+    transition: color .2s;
+  }
+  .kit-quick:hover { color: var(--clay); }
+
+  /* ───── Circulation feature article ───── */
+  .feature {
+    background:
+      radial-gradient(circle at 86% 12%, rgba(196,88,46,0.28), transparent 44%),
+      radial-gradient(circle at 6% 94%, rgba(21,41,31,0.5), transparent 52%),
+      linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
     color: var(--cream);
   }
-  .hero img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: center 42%;
-    z-index: 0;
+  .feat-banner {
+    display: grid; grid-template-columns: 0.95fr 1.05fr; gap: clamp(28px,4vw,64px);
+    align-items: center; padding-bottom: clamp(34px,4vw,52px);
+    border-bottom: 1px solid rgba(244,237,225,0.2);
   }
-  .hero::after {
-    content: ''; position: absolute; inset: 0; z-index: 1;
-    background: linear-gradient(to top, rgba(21,41,31,0.88) 0%, rgba(21,41,31,0.42) 46%, rgba(21,41,31,0.12) 100%);
+  @media (max-width: 820px) { .feat-banner { grid-template-columns: 1fr; } }
+  .feat-figure {
+    background: var(--paper); padding: 26px; aspect-ratio: 1/1;
+    max-width: 380px; width: 100%; margin: 0 auto;
+    box-shadow: 0 30px 64px rgba(0,0,0,0.34); border: 1px solid rgba(21,19,15,0.06);
   }
-  .hero-inner {
-    position: relative; z-index: 2;
-    padding: clamp(28px, 5vw, 70px) clamp(18px, 4vw, 56px) clamp(40px, 5vw, 70px);
-    max-width: 780px;
-  }
-  .hero-eyebrow {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 600;
-    color: var(--clay-soft);
-    margin-bottom: 20px;
-  }
-  .hero-eyebrow::before { content:''; width: 26px; height: 1.5px; background: var(--clay); display:inline-block; }
-  .hero h1 {
+  .feat-figure img { width: 100%; height: 100%; object-fit: contain; }
+  .feat-kicker { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 600; color: var(--clay-soft); margin-bottom: 16px; }
+  .feat-h {
     font-family: var(--display); font-weight: 400;
-    font-size: clamp(44px, 7.4vw, 92px);
-    line-height: 1.0; letter-spacing: -0.01em;
-    margin-bottom: 20px;
+    font-size: clamp(40px, 6vw, 80px); line-height: 0.94; letter-spacing: -0.01em;
+    margin-bottom: 18px;
   }
-  .hero h1 .line2 { color: var(--clay-soft); font-style: italic; }
-  .hero p { font-size: clamp(15px, 1.6vw, 18px); max-width: 540px; color: rgba(244,237,225,0.92); margin-bottom: 28px; }
-  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .feat-h .it { font-style: italic; color: var(--clay-soft); }
+  .feat-lede { font-size: clamp(15px,1.5vw,18px); line-height: 1.6; color: rgba(244,237,225,0.92); max-width: 50ch; }
+  /* feature body: text column + buy column */
+  .feat-body {
+    display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(30px,5vw,72px);
+    padding-top: clamp(34px,4vw,52px);
+  }
+  @media (max-width: 820px) { .feat-body { grid-template-columns: 1fr; } }
+  .feat-prose { font-size: clamp(15px,1.3vw,16.5px); line-height: 1.8; color: rgba(244,237,225,0.92); }
+  .feat-prose p { margin-bottom: 18px; }
+  .feat-prose p:first-of-type::first-letter {
+    font-family: var(--display); float: left; font-size: 66px; line-height: 0.72;
+    padding: 6px 12px 0 0; color: var(--clay-soft);
+  }
+  .feat-ing {
+    margin: 22px 0; padding: 18px 0; border-top: 1px solid rgba(244,237,225,0.2);
+    border-bottom: 1px solid rgba(244,237,225,0.2);
+    font-size: 13px; letter-spacing: 0.02em; color: rgba(244,237,225,0.82);
+  }
+  .feat-ing strong { color: var(--cream); text-transform: uppercase; letter-spacing: 0.16em; font-size: 11px; display:block; margin-bottom: 8px; }
+  .feat-pull {
+    font-family: var(--display); font-style: italic; font-size: clamp(22px,2.8vw,32px);
+    line-height: 1.24; color: var(--clay-soft); margin: 22px 0;
+  }
+  /* buy card inline in article */
+  .feat-buy {
+    background: rgba(244,237,225,0.06); border: 1px solid rgba(244,237,225,0.24);
+    border-radius: 8px; padding: clamp(22px,2.6vw,30px);
+    position: sticky; top: 96px;
+  }
+  .feat-buy .buy-h { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 600; color: var(--clay-soft); margin-bottom: 16px; }
+  .feat-price { font-family: var(--display); font-weight: 400; font-size: 40px; margin-bottom: 4px; }
+  .feat-price span { font-size: 13px; font-family: var(--body); color: rgba(244,237,225,0.7); }
+  .feat-tiers { display: grid; gap: 10px; margin: 20px 0; }
+  .feat-tiers .btn { width: 100%; justify-content: space-between; }
+  .feat-disc { font-size: 11px; color: rgba(244,237,225,0.62); margin-top: 18px; line-height: 1.6; }
+
   .btn {
     display: inline-flex; align-items: center; gap: 10px;
     font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 15px 28px; border-radius: 4px;
-    transition: transform .2s, background .2s, color .2s;
+    padding: 14px 22px; border-radius: 4px;
+    transition: transform .2s, background .2s, color .2s, border-color .2s;
   }
   .btn-primary { background: var(--clay); color: var(--cream); }
   .btn-primary:hover { transform: translateY(-2px); background: var(--clay-deep); }
-  .btn-ghost { background: transparent; color: var(--cream); border: 1px solid rgba(244,237,225,0.55); }
-  .btn-ghost:hover { background: rgba(244,237,225,0.14); }
+  .btn-pack { background: rgba(244,237,225,0.08); border: 1px solid rgba(244,237,225,0.5); color: var(--cream); }
+  .btn-pack:hover { background: rgba(244,237,225,0.18); }
+  .feat-add { width: 100%; justify-content: center; margin-top: 6px; }
 
-  /* ───── Section frame ───── */
-  .section { padding: clamp(48px, 7vw, 96px) clamp(18px, 4vw, 56px); }
-  .sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: clamp(24px, 3vw, 40px); max-width: 1320px; margin-left:auto; margin-right:auto; }
-  .sec-kicker { font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; font-weight: 600; color: var(--clay); margin-bottom: 12px; }
-  .sec-title { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 4.6vw, 56px); line-height: 1.02; letter-spacing: -0.01em; color: var(--green); }
-  .sec-note { font-size: 13px; color: var(--ink-soft); max-width: 320px; }
-
-  /* ───── Circulation spotlight ───── */
-  .spotlight {
-    background:
-      radial-gradient(circle at 84% 18%, rgba(196,88,46,0.30), transparent 46%),
-      radial-gradient(circle at 10% 90%, rgba(21,41,31,0.55), transparent 55%),
-      linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
-    color: var(--cream);
-    padding: clamp(48px, 7vw, 100px) clamp(18px, 4vw, 56px);
-    position: relative; overflow: hidden;
+  /* ───── Clubhouse closing note ───── */
+  .clubhouse { background: var(--paper); }
+  .club-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(26px,4vw,56px); margin-top: clamp(30px,4vw,46px); }
+  @media (max-width: 760px) { .club-grid { grid-template-columns: 1fr; } }
+  .club-item .cno { font-family: var(--display); font-size: 30px; color: var(--clay); display:block; line-height:1; margin-bottom: 14px; }
+  .club-item h4 { font-family: var(--display); font-weight: 400; font-size: 24px; color: var(--green); margin-bottom: 10px; }
+  .club-item p { font-size: 14px; color: var(--ink-soft); line-height: 1.7; }
+  .club-sign {
+    font-family: var(--display); font-style: italic; font-size: clamp(26px,3.4vw,40px);
+    color: var(--green); margin-top: clamp(36px,4vw,56px); max-width: 24ch; line-height: 1.2;
   }
-  .spotlight::before {
-    content:''; position:absolute; left: 0; right: 0; top: 50%;
-    height: 1px; background: rgba(244,237,225,0.18);
-  }
-  .spot-grid {
-    max-width: 1180px; margin: 0 auto;
-    display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(32px, 5vw, 76px);
-    align-items: center; position: relative; z-index: 1;
-  }
-  @media (max-width: 880px) { .spot-grid { grid-template-columns: 1fr; } }
-  .spot-imgwrap {
-    background: var(--paper); border-radius: 8px;
-    padding: 22px; aspect-ratio: 1/1; max-width: 420px; width: 100%;
-    margin: 0 auto;
-    box-shadow: 0 28px 64px rgba(0,0,0,0.32);
-    border: 1px solid rgba(21,19,15,0.06);
-  }
-  .spot-imgwrap img { width: 100%; height: 100%; object-fit: contain; }
-  .spot-kicker { display:inline-flex; align-items:center; gap:10px; font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; font-weight: 600; color: var(--clay-soft); margin-bottom: 18px; }
-  .spot-title { font-family: var(--display); font-weight: 400; font-size: clamp(38px, 5.2vw, 66px); line-height: 1.0; letter-spacing: -0.01em; margin-bottom: 18px; }
-  .spot-lead { font-size: clamp(15px, 1.5vw, 17px); color: rgba(244,237,225,0.9); margin-bottom: 24px; max-width: 540px; }
-  .spot-benefits { list-style: none; display: grid; gap: 11px; margin-bottom: 24px; max-width: 540px; }
-  .spot-benefits li { display: flex; gap: 13px; font-size: 14px; color: rgba(244,237,225,0.95); }
-  .spot-benefits li::before { content:''; flex-shrink:0; margin-top: 7px; width: 7px; height: 7px; border-radius: 999px; background: var(--clay); }
-  .spot-ing { font-size: 12.5px; color: rgba(244,237,225,0.74); letter-spacing: 0.02em; margin-bottom: 26px; max-width: 540px; }
-  .spot-ing strong { color: var(--cream); font-weight: 600; }
-  .spot-buy { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-  .spot-price { font-family: var(--display); font-weight: 400; font-size: 34px; }
-  .spot-price span { font-size: 13px; font-weight: 400; color: rgba(244,237,225,0.7); font-family: var(--body); }
-  .spot-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-  .spot-actions .btn-pack { background: rgba(244,237,225,0.1); border: 1px solid rgba(244,237,225,0.5); color: var(--cream); }
-  .spot-actions .btn-pack:hover { background: rgba(244,237,225,0.2); }
-  .spot-disc { font-size: 11px; color: rgba(244,237,225,0.6); margin-top: 18px; max-width: 540px; line-height: 1.55; }
-
-  /* ───── Filmstrips ───── */
-  .strip-wrap { max-width: 1320px; margin: 0 auto; }
-  .strip {
-    display: flex; gap: 20px;
-    overflow-x: auto; overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    padding: 6px 4px 22px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin; scrollbar-color: var(--clay) var(--clay-soft);
-  }
-  .strip::-webkit-scrollbar { height: 7px; }
-  .strip::-webkit-scrollbar-track { background: var(--clay-soft); border-radius: 999px; }
-  .strip::-webkit-scrollbar-thumb { background: var(--clay); border-radius: 999px; }
-  .pcard {
-    flex: 0 0 clamp(230px, 30vw, 300px);
-    scroll-snap-align: start;
-    background: var(--paper);
-    border: 1px solid var(--line-soft);
-    border-radius: 8px; overflow: hidden;
-    cursor: pointer;
-    display: flex; flex-direction: column;
-    transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s;
-  }
-  .pcard:hover { transform: translateY(-5px); box-shadow: 0 18px 38px rgba(21,19,15,0.14); }
-  .pcard-img { aspect-ratio: 1/1; background: var(--sand); overflow: hidden; position: relative; }
-  .pcard-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
-  .pcard:hover .pcard-img img { transform: scale(1.05); }
-  .pcard-tag {
-    position: absolute; top: 12px; left: 12px;
-    background: var(--green); color: var(--cream);
-    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600;
-    padding: 5px 10px; border-radius: 3px;
-  }
-  .pcard-add {
-    position: absolute; bottom: 12px; right: 12px;
-    width: 40px; height: 40px; border-radius: 4px;
-    background: var(--clay); color: var(--cream);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; font-weight: 500; line-height: 1;
-    opacity: 0; transform: translateY(6px); transition: opacity .25s, transform .25s, background .2s;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.22);
-  }
-  .pcard:hover .pcard-add { opacity: 1; transform: translateY(0); }
-  .pcard-add:hover { background: var(--clay-deep); }
-  .pcard-body { padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
-  .pcard-name { font-family: var(--display); font-weight: 400; font-size: 21px; line-height: 1.1; color: var(--green); }
-  .pcard-kind { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--clay); font-weight: 600; }
-  .pcard-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; flex: 1; }
-  .pcard-price { font-family: var(--display); font-weight: 400; font-size: 19px; margin-top: 4px; }
-  .strip-hint { font-size: 11px; color: var(--ink-soft); letter-spacing: 0.12em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-  .strip-hint .arrow { animation: nudge 1.6s ease-in-out infinite; }
-  @keyframes nudge { 0%,100%{ transform: translateX(0);} 50%{ transform: translateX(5px);} }
-
-  .strips-section { background: var(--cream); position: relative; }
-  .strips-section::before {
-    content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
-    background-image: repeating-linear-gradient(0deg, transparent, transparent 38px, rgba(21,19,15,0.025) 38px, rgba(21,19,15,0.025) 39px);
-  }
-  .strips-section > * { position: relative; z-index: 1; }
-
-  /* ───── Promise trio ───── */
-  .promise { background: var(--sand); }
-  .promise-inner { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 4vw, 56px); }
-  @media (max-width: 760px) { .promise-inner { grid-template-columns: 1fr; } }
-  .promise-item .pno { font-family: var(--display); font-weight: 400; font-size: 30px; color: var(--clay); margin-bottom: 14px; display:block; line-height:1; }
-  .promise-item h4 { font-family: var(--display); font-weight: 400; font-size: 25px; margin-bottom: 10px; color: var(--green); }
-  .promise-item p { font-size: 14px; color: var(--ink-soft); line-height: 1.7; }
-
-  /* ───── Reviews ───── */
-  .reviews { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  @media (max-width: 880px) { .reviews { grid-template-columns: 1fr; } }
-  .review { background: var(--paper); border: 1px solid var(--line-soft); border-radius: 8px; padding: 28px; }
-  .review p { font-size: 15px; line-height: 1.65; margin-bottom: 18px; font-style: italic; }
-  .review-by { display: flex; align-items: center; gap: 12px; }
-  .review-by img { width: 44px; height: 44px; border-radius: 999px; object-fit: cover; background: var(--sand); }
-  .review-by .rb-name { font-weight: 600; font-size: 14px; }
-  .review-by .rb-meta { font-size: 12px; color: var(--ink-soft); }
+  .club-sign .nm { display:block; font-family: var(--body); font-style: normal; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--clay); margin-top: 18px; }
 
   /* ───── Footer ───── */
   footer { background: var(--green); color: var(--cream); padding: clamp(52px, 7vw, 92px) clamp(18px, 4vw, 56px) 30px; }
-  .foot-grid { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: clamp(28px, 5vw, 72px); padding-bottom: 44px; border-bottom: 1px solid rgba(244,237,225,0.16); }
+  .foot-grid { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: clamp(28px, 5vw, 72px); padding-bottom: 44px; border-bottom: 1px solid rgba(244,237,225,0.16); }
   @media (max-width: 880px) { .foot-grid { grid-template-columns: 1fr 1fr; gap: 30px; } }
   .foot-mark { font-family: var(--display); font-weight: 400; font-size: 32px; margin-bottom: 14px; display:flex; align-items:center; gap:10px; }
   .foot-mark .mk { width: 15px; height: 15px; position: relative; display:inline-block; }
@@ -318,8 +369,8 @@
   .foot-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
   .foot-list a, .foot-list span { font-size: 13px; color: rgba(244,237,225,0.78); transition: color .2s; }
   .foot-list a:hover { color: var(--cream); }
-  .foot-disc { max-width: 1320px; margin: 22px auto 0; font-size: 11px; color: rgba(244,237,225,0.5); line-height: 1.6; }
-  .foot-bottom { max-width: 1320px; margin: 16px auto 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 11px; color: rgba(244,237,225,0.5); letter-spacing: 0.04em; }
+  .foot-disc { max-width: 1180px; margin: 22px auto 0; font-size: 11px; color: rgba(244,237,225,0.5); line-height: 1.6; }
+  .foot-bottom { max-width: 1180px; margin: 16px auto 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 11px; color: rgba(244,237,225,0.5); letter-spacing: 0.04em; }
 
   /* ───── Modal ───── */
   .modal-bg { position: fixed; inset: 0; background: rgba(21,41,31,0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity .28s; z-index: 90; }
@@ -390,7 +441,6 @@
   .reveal.in { opacity: 1; transform: translateY(0); }
   @media (prefers-reduced-motion: reduce) {
     .reveal { transition: none; opacity: 1; transform: none; }
-    .strip-hint .arrow { animation: none; }
   }
 </style>
 </head>
@@ -418,137 +468,142 @@
 <header class="nav">
   <a href="#" class="wordmark"><span class="mk"></span>Deuce</a>
   <nav class="navlinks">
+    <a href="#essay">The Essay</a>
+    <a href="#kit">The Kit</a>
     <a href="#circulation">Circulation</a>
-    <a href="#oncourt">On Court</a>
-    <a href="#promise">The Clubhouse</a>
-    <a href="checkout.html">Bag</a>
+    <a href="#clubhouse">Clubhouse</a>
   </nav>
   <button class="bag-btn" id="bagOpen" aria-label="Open bag">
     <span>Bag</span><span class="bag-count empty" id="bagCount">0</span>
   </button>
 </header>
 
-<!-- HERO -->
-<section class="hero">
-  <!-- Lifestyle photo sourced via Openverse public API; attribution in build log -->
-  <img src="images/hero.jpg" alt="Tennis player on court during a match" loading="eager">
-  <div class="hero-inner">
-    <span class="hero-eyebrow">Tennis Gear &amp; Circulation Support</span>
-    <h1>Play the<br><span class="line2">long match.</span></h1>
-    <p>A composed, honest kit for the player who keeps showing up: the grips, dampeners, and towels that get you on court, plus Circulation, our blood-flow support for the third set.</p>
-    <div class="hero-cta">
-      <a href="#circulation" class="btn btn-primary">Meet Circulation</a>
-      <a href="#oncourt" class="btn btn-ghost">Shop On Court</a>
+<!-- MASTHEAD -->
+<section class="masthead">
+  <div class="issue">
+    <div class="mast-top">
+      <span class="mast-org">Deuce · The Clubhouse Quarterly</span>
+      <span>Issue No. 01 · Tennis Gear &amp; Circulation Support</span>
+    </div>
+    <div class="mast-rules">
+      <div class="rule-thick"></div>
+      <div class="rule-clay"></div>
+    </div>
+    <h1 class="mast-title">Play the long match.</h1>
+    <div class="mast-deck">
+      <p class="mast-lede">A composed, honest kit for the player who keeps showing up. The grips, dampeners, and towels that get you on court, and Circulation, our blood-flow support for the third set.</p>
+      <div class="mast-byline">
+        <strong>In this issue</strong>
+        An opening note on the long match. The seven pieces of the clubhouse kit, photographed and priced. A feature on Circulation, our supplement for the back half. A closing word from the clubhouse.
+        <div class="mast-jump">
+          <a href="#kit">The Kit</a>
+          <a href="#circulation">Circulation</a>
+          <a href="#clubhouse">Clubhouse</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- CIRCULATION SPOTLIGHT -->
-<section class="spotlight" id="circulation">
-  <div class="spot-grid">
-    <div class="spot-imgwrap reveal">
-      <!-- Studio product render generated via fal.ai (flux/schnell), no trademark, blank label -->
-      <img src="images/circulation.png" alt="Circulation blood-flow support supplement bottle">
+<!-- OPENING ESSAY -->
+<section class="article" id="essay">
+  <div class="issue">
+    <p class="art-kicker">The Opening Note</p>
+    <h2 class="art-h">On the long match.</h2>
+    <div class="essay-body reveal">
+      <p>A match is rarely decided in the first set. It is decided in the hour after, when the legs go heavy and the serve toss drifts and the mind starts negotiating with the body. That hour is the real game. Everything we make is built for the player who is still there when it arrives.</p>
+      <p>We are not interested in a wall of gear. A player reaches for a small, familiar set of things: a grip that holds when the hands are damp, a dampener that quiets the frame, a band that keeps sweat off the strings. A towel. A bag that lives in the car. A visor for the afternoon sun. Seven pieces, chosen once, used for years.</p>
+      <p>And then there is the part of the long match that no towel can fix. Tired legs, slow recovery between points, the warm-up that takes a little longer than it used to. That is where Circulation comes in, and we will be honest about exactly what it is and is not, later in this issue.</p>
+      <p>What follows is the kit and the formula, laid out the way we think about them: plainly, in order, with the price in view. Read it like a clubhouse noticeboard, not a catalog. Then pick the one or two things you will actually reach for, and get back on court.</p>
     </div>
-    <div class="reveal">
-      <span class="spot-kicker">The Featured Formula</span>
-      <h2 class="spot-title">Circulation</h2>
-      <p class="spot-lead">A blood-flow supplement built for the back half of a long match. Supports circulation, leg freshness, and stamina across long matches and third sets.</p>
-      <ul class="spot-benefits">
-        <li>Supports healthy circulation and blood flow</li>
-        <li>Supports leg freshness across long matches and third sets</li>
-        <li>Supports stamina and an easier warm-up between games</li>
-      </ul>
-      <p class="spot-ing"><strong>Inside:</strong> L-Citrulline · Beetroot Extract · Ginkgo Biloba · Cayenne · Vitamin B12.</p>
-      <div class="spot-buy">
-        <div class="spot-price" id="spotPrice">$240 <span>/ 3 bottles</span></div>
+    <blockquote class="pull reveal">
+      The match is decided in the hour after the first set.
+      <span class="by">Deuce, on the long match</span>
+    </blockquote>
+  </div>
+</section>
+
+<!-- THE KIT (editorial grid) -->
+<section class="article kit" id="kit">
+  <div class="issue">
+    <div class="kit-head">
+      <div>
+        <p class="art-kicker">Feature · The Kit</p>
+        <h2 class="art-h" style="margin-bottom:0;">Seven pieces, chosen once.</h2>
       </div>
-      <div class="spot-actions" id="spotTiers" style="margin-top:18px;">
-        <button class="btn btn-pack" data-tier="1">1 Bottle, $149</button>
-        <button class="btn btn-pack" data-tier="2">2 Bottles, $180</button>
-        <button class="btn btn-primary" data-tier="3">3 Bottles, $240</button>
+      <p class="kit-note">The whole on-court kit, photographed and priced. Tap any piece for the full note, or add it straight to the bag.</p>
+    </div>
+    <div class="kit-grid" id="kitGrid"></div>
+  </div>
+</section>
+
+<!-- CIRCULATION FEATURE -->
+<section class="article feature" id="circulation">
+  <div class="issue">
+    <div class="feat-banner">
+      <div class="feat-figure reveal">
+        <!-- Studio product render generated via fal.ai (flux/schnell), no trademark, blank label -->
+        <img src="images/circulation.png" alt="Circulation blood-flow support supplement bottle">
       </div>
-      <div class="spot-actions" style="margin-top:14px;">
-        <button class="btn btn-primary" id="spotAdd">Add 3 Bottles, $240</button>
+      <div class="reveal">
+        <p class="feat-kicker">The Feature · The Formula</p>
+        <h2 class="feat-h">Circulation,<br><span class="it">for the back half.</span></h2>
+        <p class="feat-lede">A blood-flow supplement built around the demands of tennis. It supports circulation, leg freshness, and stamina across long matches and third sets.</p>
       </div>
-      <p class="spot-disc">A dietary supplement. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before use, especially if pregnant, nursing, or taking medication.</p>
+    </div>
+    <div class="feat-body">
+      <div class="feat-prose reveal">
+        <p>Most gear stops at the surface. A grip helps the hand, a band helps the sweat, a towel helps between games. None of it reaches the part of the match that actually wears you down: the legs, the recovery, the slow climb back to fresh after a long rally.</p>
+        <p>Circulation is our answer to that. It is a daily supplement, taken before play, formulated to support healthy blood flow so your legs feel fresher deeper into a match and your warm-up comes a little easier between games. It is not a stimulant and it is not a shortcut. It is one honest piece of the long-match picture.</p>
+        <blockquote class="feat-pull">We name every ingredient and print nothing we cannot stand behind.</blockquote>
+        <p>We will be plain about what this is. Circulation is a dietary supplement, not a treatment. We name every ingredient on the label, we make no disease claims, and we would rather you ask your healthcare provider before starting than take our word as medicine.</p>
+        <div class="feat-ing">
+          <strong>Inside</strong>
+          L-Citrulline · Beetroot Extract · Ginkgo Biloba · Cayenne · Vitamin B12.
+        </div>
+        <p class="feat-disc">A dietary supplement. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before use, especially if pregnant, nursing, or taking medication.</p>
+      </div>
+      <aside class="feat-buy reveal">
+        <p class="buy-h">Choose your supply</p>
+        <div class="feat-price" id="spotPrice">$240 <span>/ 3 bottles</span></div>
+        <div class="feat-tiers" id="spotTiers">
+          <button class="btn btn-pack" data-tier="1"><span>1 Bottle</span><span>$149</span></button>
+          <button class="btn btn-pack" data-tier="2"><span>2 Bottles</span><span>$180</span></button>
+          <button class="btn btn-primary" data-tier="3"><span>3 Bottles</span><span>$240</span></button>
+        </div>
+        <button class="btn btn-primary feat-add" id="spotAdd">Add 3 Bottles, $240</button>
+        <p class="feat-disc" style="margin-top:14px;">Circulation is sold on its own and is not part of the kit bundle. Free US shipping over $100.</p>
+      </aside>
     </div>
   </div>
 </section>
 
-<!-- ON-COURT FILMSTRIP -->
-<section class="section strips-section" id="oncourt">
-  <div class="sec-head">
-    <div>
-      <p class="sec-kicker">The Kit · On the Court</p>
-      <h2 class="sec-title">On Court</h2>
-    </div>
-    <div class="strip-hint">Scroll <span class="arrow">→</span></div>
-  </div>
-  <div class="strip-wrap">
-    <div class="strip" id="stripCourt"></div>
-  </div>
-</section>
-
-<!-- PROMISE TRIO -->
-<section class="section promise" id="promise">
-  <div class="sec-head" style="margin-bottom: clamp(28px,4vw,44px);">
-    <div>
-      <p class="sec-kicker">The Clubhouse</p>
-      <h2 class="sec-title">Quiet quality, no theatrics.</h2>
-    </div>
-  </div>
-  <div class="promise-inner">
-    <div class="promise-item reveal">
-      <span class="pno">I</span>
-      <h4>A short, considered kit</h4>
-      <p>We stock what a player actually reaches for: grips, dampeners, wristbands, socks, a towel, a bag, a visor. No filler, no fifty colorways you will never buy.</p>
-    </div>
-    <div class="promise-item reveal">
-      <span class="pno">II</span>
-      <h4>Honest about Circulation</h4>
-      <p>Circulation is a supplement, not a promise. We name every ingredient, we print no dosages we cannot stand behind, and we never claim it treats disease.</p>
-    </div>
-    <div class="promise-item reveal">
-      <span class="pno">III</span>
-      <h4>Easy to live with</h4>
-      <p>Free US shipping over $100, a flat $7.99 below it, and 30 days to send anything back. Questions reach a person at help@deuce.com.</p>
-    </div>
-  </div>
-</section>
-
-<!-- REVIEWS -->
-<section class="section">
-  <div class="sec-head">
-    <div>
-      <p class="sec-kicker">From the baseline</p>
-      <h2 class="sec-title">Player notes</h2>
-    </div>
-    <p class="sec-note">A few notes from players who shop the kit. Shared with permission.</p>
-  </div>
-  <div class="reviews">
-    <div class="review reveal">
-      <p>"The overgrip is the one I keep coming back to. Tacky without being sticky, and it holds up through a few weeks of league play."</p>
-      <div class="review-by">
-        <!-- Headshot sourced via Openverse public API; attribution in build log -->
-        <img src="images/face1.jpg" alt="Player headshot">
-        <div><div class="rb-name">Marcus T.</div><div class="rb-meta">Verified buyer</div></div>
+<!-- CLUBHOUSE CLOSING NOTE -->
+<section class="article clubhouse" id="clubhouse">
+  <div class="issue">
+    <p class="art-kicker">The Closing Word</p>
+    <h2 class="art-h">From the clubhouse.</h2>
+    <div class="club-grid">
+      <div class="club-item reveal">
+        <span class="cno">I</span>
+        <h4>A short, considered kit</h4>
+        <p>We stock what a player actually reaches for: grips, dampeners, wristbands, socks, a towel, a bag, a visor. No filler, no fifty colorways you will never buy.</p>
+      </div>
+      <div class="club-item reveal">
+        <span class="cno">II</span>
+        <h4>Honest about Circulation</h4>
+        <p>Circulation is a supplement, not a promise. We name every ingredient, we print no dosages we cannot stand behind, and we never claim it treats disease.</p>
+      </div>
+      <div class="club-item reveal">
+        <span class="cno">III</span>
+        <h4>Easy to live with</h4>
+        <p>Free US shipping over $100, a flat $7.99 below it, and 30 days to send anything back. Questions reach a person at help@deuce.com.</p>
       </div>
     </div>
-    <div class="review reveal">
-      <p>"I take Circulation before our Saturday doubles. I won't make big claims, but my legs feel fresher into the later sets. Easy to add to the morning."</p>
-      <div class="review-by">
-        <img src="images/face2.jpg" alt="Player headshot">
-        <div><div class="rb-name">Dana R.</div><div class="rb-meta">Verified buyer</div></div>
-      </div>
-    </div>
-    <div class="review reveal">
-      <p>"The racket bag holds two frames, a towel, balls and my keys. It lives in the car now. Simple, well made, and it does the job."</p>
-      <div class="review-by">
-        <img src="images/face3.jpg" alt="Player headshot">
-        <div><div class="rb-name">Priya S.</div><div class="rb-meta">Verified buyer</div></div>
-      </div>
-    </div>
+    <p class="club-sign reveal">
+      Pick up a grip, get on court, and we will see you in the third set.
+      <span class="nm">Deuce · The Clubhouse Quarterly</span>
+    </p>
   </div>
 </section>
 
@@ -560,11 +615,12 @@
       <p class="foot-blurb">A clubhouse tennis shop. A short, honest kit and Circulation, our blood-flow support for the long match. Free US shipping over $100.</p>
     </div>
     <div>
-      <p class="foot-h">Shop</p>
+      <p class="foot-h">Issue</p>
       <ul class="foot-list">
+        <li><a href="#essay">The Essay</a></li>
+        <li><a href="#kit">The Kit</a></li>
         <li><a href="#circulation">Circulation</a></li>
-        <li><a href="#oncourt">On Court</a></li>
-        <li><a href="#promise">The Clubhouse</a></li>
+        <li><a href="#clubhouse">Clubhouse</a></li>
       </ul>
     </div>
     <div>
@@ -671,32 +727,41 @@ let cart = loadCart();
 function fmt(n) { return '$' + n.toFixed(2).replace(/\.00$/, ''); }
 function cartTotal(c) { return c.reduce((s, l) => s + l.price * l.qty, 0); }
 
-// ─── Filmstrips ───
-function cardHTML(p) {
+// ─── The Kit editorial grid ───
+const ROMAN = ['I','II','III','IV','V','VI','VII'];
+function kitItemHTML(p, i) {
+  const lead = i === 0;
   return `
-  <article class="pcard" data-slug="${p.slug}">
-    <div class="pcard-img">
+  <article class="kit-item${lead ? ' lead' : ''}" data-slug="${p.slug}">
+    <div class="kit-figure" data-open="${p.slug}">
       <img src="images/${p.img}" alt="${p.name}" loading="lazy">
-      <span class="pcard-tag">${p.kind}</span>
-      <button class="pcard-add" type="button" data-quick="${p.slug}" aria-label="Quick add ${p.name}">+</button>
+      <span class="plate">${ROMAN[i] || (i+1)}</span>
+      <button class="kit-add" type="button" data-quick="${p.slug}" aria-label="Quick add ${p.name}">Add to bag</button>
     </div>
-    <div class="pcard-body">
-      <span class="pcard-kind">${p.kind}</span>
-      <h3 class="pcard-name">${p.name}</h3>
-      <p class="pcard-desc">${p.desc.split('.')[0]}.</p>
-      <div class="pcard-price">${fmt(p.price)}</div>
+    <div class="kit-cap">
+      <span class="cnum">${p.kind}</span>
+      <h3>${p.name}</h3>
+      <p>${p.desc.split('.')[0]}.</p>
+      <div class="kit-meta">
+        <span class="kit-price">${fmt(p.price)}</span>
+        <button class="kit-quick" type="button" data-quick="${p.slug}">Add to bag</button>
+      </div>
     </div>
   </article>`;
 }
-function renderStrips() {
-  document.getElementById('stripCourt').innerHTML = PRODUCTS.filter(p => p.cat === 'gear').map(cardHTML).join('');
-  document.querySelectorAll('.pcard').forEach(card => {
-    card.addEventListener('click', e => {
+function renderKit() {
+  const grid = document.getElementById('kitGrid');
+  const gear = PRODUCTS.filter(p => p.cat === 'gear');
+  grid.innerHTML = gear.map(kitItemHTML).join('');
+  // open modal from the figure (image) tap
+  grid.querySelectorAll('[data-open]').forEach(fig => {
+    fig.addEventListener('click', e => {
       if (e.target.closest('[data-quick]')) return;
-      openModal(card.dataset.slug);
+      openModal(fig.dataset.open);
     });
   });
-  document.querySelectorAll('[data-quick]').forEach(btn => {
+  // quick-add buttons (figure + caption)
+  grid.querySelectorAll('[data-quick]').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
       const p = PRODUCTS_INDEX[btn.dataset.quick];
@@ -788,7 +853,7 @@ document.getElementById('modalAdd').addEventListener('click', () => {
   toast(`${modalProduct.name}${modalOpt ? ' · ' + modalOpt : ''} added`);
 });
 
-// ─── Spotlight supplement tier selector ───
+// ─── Feature supplement tier selector (Circulation) ───
 (function() {
   const tierWrap = document.getElementById('spotTiers');
   const priceEl = document.getElementById('spotPrice');
@@ -908,7 +973,7 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
 // ─── Init ───
 document.getElementById('year').textContent = new Date().getFullYear();
-renderStrips();
+renderKit();
 renderCart();
 </script>
 </body>
