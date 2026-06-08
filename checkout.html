@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout | Deuce</title>
-<meta name="description" content="Secure checkout for your Deuce bag.">
+<title>Checkout | Tennis Supply Store</title>
+<meta name="description" content="Secure checkout for your Tennis Supply Store bag.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -41,7 +41,7 @@
   @media (max-width: 700px) { .b-help, .b-info { font-size: 10px; } .b-loud { font-size: 10.5px; } .b-loud-track { height: 36px; } }
 
   .nav { display: flex; align-items: center; justify-content: space-between; padding: 16px clamp(18px,4vw,56px); border-bottom: 1px solid var(--line-soft); }
-  .wordmark { font-family: var(--display); font-size: 27px; letter-spacing: 0.02em; display:flex; align-items:center; gap:10px; color: var(--green); }
+  .wordmark { font-family: var(--display); font-size: 22px; letter-spacing: 0.02em; display:flex; align-items:center; gap:10px; color: var(--green); }
   .wordmark .mk { width: 16px; height: 16px; position: relative; display:inline-block; }
   .wordmark .mk::before { content:''; position:absolute; inset:0; border:2px solid var(--clay); border-radius:999px; }
   .wordmark .mk::after { content:''; position:absolute; left:50%; top:0; bottom:0; width:2px; background:var(--clay); transform:translateX(-50%); }
@@ -154,7 +154,7 @@
 </div>
 
 <header class="nav">
-  <a href="index.html" class="wordmark"><span class="mk"></span>Deuce</a>
+  <a href="index.html" class="wordmark"><span class="mk"></span>Tennis Supply Store</a>
   <span class="secure"><svg viewBox="0 0 16 16" fill="none"><path d="M3 7V5a5 5 0 0110 0v2M3 7h10v7H3V7z" stroke="currentColor" stroke-width="1.4"/></svg>Secure Checkout</span>
 </header>
 
@@ -260,7 +260,7 @@
 <section id="successScreen" class="success">
   <div class="success-mark">✓</div>
   <h1>Game, set, match.</h1>
-  <p id="successName">Your Deuce order is confirmed.</p>
+  <p id="successName">Your Tennis Supply Store order is confirmed.</p>
   <p id="successEmail"></p>
   <div class="success-order" id="successOrderId"></div>
   <br><br>
@@ -481,7 +481,7 @@ document.getElementById('orderForm').addEventListener('submit', async (e) => {
   document.getElementById('checkoutMain').style.display = 'none';
   document.querySelector('.steps').style.display = 'none';
   const success = document.getElementById('successScreen');
-  document.getElementById('successName').textContent = `Thanks, ${payload.customer.first_name}. Your Deuce order is confirmed.`;
+  document.getElementById('successName').textContent = `Thanks, ${payload.customer.first_name}. Your Tennis Supply Store order is confirmed.`;
   document.getElementById('successEmail').textContent = `A confirmation has been sent to ${payload.email}. Tracking arrives within 1 business day.`;
   document.getElementById('successOrderId').textContent = `Order · ${orderId}`;
   success.classList.add('show');
