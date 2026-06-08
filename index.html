@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deuce | Tennis Gear & Circulation Support</title>
+<meta name="description" content="Deuce is a clubhouse tennis shop. Overgrips, dampeners, wristbands, socks, towels, bags, and Circulation, our blood-flow support for the long match. Play the long match.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ───────────────────────────────────────────────
+     DEUCE - Court Report Filmstrip (restyle)
+     Layout structure reused from Baseline per explicit
+     user request (the no-repeat-layout rule is waived for
+     STRUCTURE only): 3 stacked banners, sticky nav with live
+     cart count, full-bleed hero, supplement spotlight band,
+     horizontal scroll-snap category filmstrip, product modal,
+     right cart drawer + localStorage + toast. 100% restyled.
+
+     Design intent: a composed, clubhouse tennis shop with a
+     clay-court heritage feel. Backgrounds are never flat
+     (court-clay washes + canvas texture rules).
+     Palette: clay #C4582E, cream #F4EDE1, deep court green
+     #1E3D2F, sand wash #EFE6D6, ink #15130F.
+     Type: Libre Caslon Display (display) + Spline Sans (body).
+     Voice: classic, composed, clubhouse ("Play the long match.").
+     ─────────────────────────────────────────────── */
+  :root {
+    --clay: #C4582E;
+    --clay-deep: #9E4421;
+    --clay-soft: #F0DCCF;
+    --cream: #F4EDE1;
+    --paper: #FBF6EC;
+    --green: #1E3D2F;
+    --green-deep: #15291F;
+    --sand: #EFE6D6;
+    --ink: #15130F;
+    --ink-soft: rgba(21, 19, 15, 0.62);
+    --line: rgba(21, 19, 15, 0.16);
+    --line-soft: rgba(21, 19, 15, 0.08);
+    --error: #B23A2E;
+    --display: 'Libre Caslon Display', Georgia, serif;
+    --body: 'Spline Sans', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--body);
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.6;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+  /* ───── Banners ───── */
+  .b-help {
+    background: var(--paper); color: var(--ink);
+    padding: 8px 16px; text-align: center;
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .b-help a { color: var(--clay); font-weight: 600; margin-left: 8px; }
+  .b-help a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  .b-loud {
+    background: var(--clay); color: var(--cream);
+    text-align: center; font-size: 12.5px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
+    overflow: hidden; position: relative;
+  }
+  .b-loud::before, .b-loud::after { content:''; position:absolute; top:0; bottom:0; width:64px; z-index:2; pointer-events:none; }
+  .b-loud::before { left:0; background: linear-gradient(to right, var(--clay), transparent); }
+  .b-loud::after { right:0; background: linear-gradient(to left, var(--clay), transparent); }
+  .b-loud-track { position: relative; height: 40px; }
+  .loud-msg { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; white-space:nowrap; opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .55s cubic-bezier(.2,.7,.2,1); padding:0 16px; }
+  .loud-msg.active { opacity:1; transform:translateY(0); }
+  .loud-msg .ball { display:inline-block; width:7px; height:7px; border-radius:999px; background: var(--cream); margin-right:12px; vertical-align:middle; box-shadow: 0 0 0 2px rgba(244,237,225,0.35); }
+
+  .b-info {
+    background: var(--green); color: var(--cream);
+    padding: 9px 16px; text-align: center;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500;
+  }
+  .b-info-track { display:flex; justify-content:center; align-items:center; gap:14px; flex-wrap:wrap; }
+  .b-info-track .dot { color: var(--clay); }
+  @media (max-width: 700px) {
+    .b-help, .b-info { font-size: 10px; letter-spacing: 0.12em; }
+    .b-loud { font-size: 10.5px; letter-spacing: 0.1em; }
+    .b-loud-track { height: 36px; }
+    .b-loud::before, .b-loud::after { width: 24px; }
+  }
+
+  /* ───── Nav ───── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px clamp(18px, 4vw, 56px);
+    background: rgba(244, 237, 225, 0.9);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .wordmark {
+    font-family: var(--display);
+    font-size: 27px; letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 10px;
+    color: var(--green);
+  }
+  .wordmark .mk { width: 16px; height: 16px; position: relative; display:inline-block; }
+  .wordmark .mk::before { content:''; position:absolute; inset:0; border:2px solid var(--clay); border-radius:999px; }
+  .wordmark .mk::after { content:''; position:absolute; left:50%; top:0; bottom:0; width:2px; background:var(--clay); transform:translateX(-50%); }
+  .navlinks { display: flex; gap: clamp(14px, 2.2vw, 30px); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
+  .navlinks a { transition: color .2s; }
+  .navlinks a:hover { color: var(--clay); }
+  .bag-btn { display: flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  .bag-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 22px; height: 22px; padding: 0 6px;
+    background: var(--clay); color: var(--cream); border-radius: 999px;
+    font-size: 11px; font-weight: 600; font-family: var(--body); letter-spacing: 0;
+  }
+  .bag-count.empty { background: var(--line); color: var(--ink-soft); }
+  @media (max-width: 820px) { .navlinks { display: none; } }
+
+  /* ───── Hero ───── */
+  .hero {
+    position: relative;
+    min-height: clamp(460px, 74vh, 680px);
+    display: flex; align-items: flex-end;
+    overflow: hidden;
+    color: var(--cream);
+  }
+  .hero img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center 42%;
+    z-index: 0;
+  }
+  .hero::after {
+    content: ''; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(to top, rgba(21,41,31,0.88) 0%, rgba(21,41,31,0.42) 46%, rgba(21,41,31,0.12) 100%);
+  }
+  .hero-inner {
+    position: relative; z-index: 2;
+    padding: clamp(28px, 5vw, 70px) clamp(18px, 4vw, 56px) clamp(40px, 5vw, 70px);
+    max-width: 780px;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 600;
+    color: var(--clay-soft);
+    margin-bottom: 20px;
+  }
+  .hero-eyebrow::before { content:''; width: 26px; height: 1.5px; background: var(--clay); display:inline-block; }
+  .hero h1 {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(44px, 7.4vw, 92px);
+    line-height: 1.0; letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+  .hero h1 .line2 { color: var(--clay-soft); font-style: italic; }
+  .hero p { font-size: clamp(15px, 1.6vw, 18px); max-width: 540px; color: rgba(244,237,225,0.92); margin-bottom: 28px; }
+  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 15px 28px; border-radius: 4px;
+    transition: transform .2s, background .2s, color .2s;
+  }
+  .btn-primary { background: var(--clay); color: var(--cream); }
+  .btn-primary:hover { transform: translateY(-2px); background: var(--clay-deep); }
+  .btn-ghost { background: transparent; color: var(--cream); border: 1px solid rgba(244,237,225,0.55); }
+  .btn-ghost:hover { background: rgba(244,237,225,0.14); }
+
+  /* ───── Section frame ───── */
+  .section { padding: clamp(48px, 7vw, 96px) clamp(18px, 4vw, 56px); }
+  .sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: clamp(24px, 3vw, 40px); max-width: 1320px; margin-left:auto; margin-right:auto; }
+  .sec-kicker { font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; font-weight: 600; color: var(--clay); margin-bottom: 12px; }
+  .sec-title { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 4.6vw, 56px); line-height: 1.02; letter-spacing: -0.01em; color: var(--green); }
+  .sec-note { font-size: 13px; color: var(--ink-soft); max-width: 320px; }
+
+  /* ───── Circulation spotlight ───── */
+  .spotlight {
+    background:
+      radial-gradient(circle at 84% 18%, rgba(196,88,46,0.30), transparent 46%),
+      radial-gradient(circle at 10% 90%, rgba(21,41,31,0.55), transparent 55%),
+      linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
+    color: var(--cream);
+    padding: clamp(48px, 7vw, 100px) clamp(18px, 4vw, 56px);
+    position: relative; overflow: hidden;
+  }
+  .spotlight::before {
+    content:''; position:absolute; left: 0; right: 0; top: 50%;
+    height: 1px; background: rgba(244,237,225,0.18);
+  }
+  .spot-grid {
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(32px, 5vw, 76px);
+    align-items: center; position: relative; z-index: 1;
+  }
+  @media (max-width: 880px) { .spot-grid { grid-template-columns: 1fr; } }
+  .spot-imgwrap {
+    background: var(--paper); border-radius: 8px;
+    padding: 22px; aspect-ratio: 1/1; max-width: 420px; width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 28px 64px rgba(0,0,0,0.32);
+    border: 1px solid rgba(21,19,15,0.06);
+  }
+  .spot-imgwrap img { width: 100%; height: 100%; object-fit: contain; }
+  .spot-kicker { display:inline-flex; align-items:center; gap:10px; font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; font-weight: 600; color: var(--clay-soft); margin-bottom: 18px; }
+  .spot-title { font-family: var(--display); font-weight: 400; font-size: clamp(38px, 5.2vw, 66px); line-height: 1.0; letter-spacing: -0.01em; margin-bottom: 18px; }
+  .spot-lead { font-size: clamp(15px, 1.5vw, 17px); color: rgba(244,237,225,0.9); margin-bottom: 24px; max-width: 540px; }
+  .spot-benefits { list-style: none; display: grid; gap: 11px; margin-bottom: 24px; max-width: 540px; }
+  .spot-benefits li { display: flex; gap: 13px; font-size: 14px; color: rgba(244,237,225,0.95); }
+  .spot-benefits li::before { content:''; flex-shrink:0; margin-top: 7px; width: 7px; height: 7px; border-radius: 999px; background: var(--clay); }
+  .spot-ing { font-size: 12.5px; color: rgba(244,237,225,0.74); letter-spacing: 0.02em; margin-bottom: 26px; max-width: 540px; }
+  .spot-ing strong { color: var(--cream); font-weight: 600; }
+  .spot-buy { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .spot-price { font-family: var(--display); font-weight: 400; font-size: 34px; }
+  .spot-price span { font-size: 13px; font-weight: 400; color: rgba(244,237,225,0.7); font-family: var(--body); }
+  .spot-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .spot-actions .btn-pack { background: rgba(244,237,225,0.1); border: 1px solid rgba(244,237,225,0.5); color: var(--cream); }
+  .spot-actions .btn-pack:hover { background: rgba(244,237,225,0.2); }
+  .spot-disc { font-size: 11px; color: rgba(244,237,225,0.6); margin-top: 18px; max-width: 540px; line-height: 1.55; }
+
+  /* ───── Filmstrips ───── */
+  .strip-wrap { max-width: 1320px; margin: 0 auto; }
+  .strip {
+    display: flex; gap: 20px;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    padding: 6px 4px 22px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin; scrollbar-color: var(--clay) var(--clay-soft);
+  }
+  .strip::-webkit-scrollbar { height: 7px; }
+  .strip::-webkit-scrollbar-track { background: var(--clay-soft); border-radius: 999px; }
+  .strip::-webkit-scrollbar-thumb { background: var(--clay); border-radius: 999px; }
+  .pcard {
+    flex: 0 0 clamp(230px, 30vw, 300px);
+    scroll-snap-align: start;
+    background: var(--paper);
+    border: 1px solid var(--line-soft);
+    border-radius: 8px; overflow: hidden;
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s;
+  }
+  .pcard:hover { transform: translateY(-5px); box-shadow: 0 18px 38px rgba(21,19,15,0.14); }
+  .pcard-img { aspect-ratio: 1/1; background: var(--sand); overflow: hidden; position: relative; }
+  .pcard-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+  .pcard:hover .pcard-img img { transform: scale(1.05); }
+  .pcard-tag {
+    position: absolute; top: 12px; left: 12px;
+    background: var(--green); color: var(--cream);
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600;
+    padding: 5px 10px; border-radius: 3px;
+  }
+  .pcard-add {
+    position: absolute; bottom: 12px; right: 12px;
+    width: 40px; height: 40px; border-radius: 4px;
+    background: var(--clay); color: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 500; line-height: 1;
+    opacity: 0; transform: translateY(6px); transition: opacity .25s, transform .25s, background .2s;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.22);
+  }
+  .pcard:hover .pcard-add { opacity: 1; transform: translateY(0); }
+  .pcard-add:hover { background: var(--clay-deep); }
+  .pcard-body { padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .pcard-name { font-family: var(--display); font-weight: 400; font-size: 21px; line-height: 1.1; color: var(--green); }
+  .pcard-kind { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--clay); font-weight: 600; }
+  .pcard-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; flex: 1; }
+  .pcard-price { font-family: var(--display); font-weight: 400; font-size: 19px; margin-top: 4px; }
+  .strip-hint { font-size: 11px; color: var(--ink-soft); letter-spacing: 0.12em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  .strip-hint .arrow { animation: nudge 1.6s ease-in-out infinite; }
+  @keyframes nudge { 0%,100%{ transform: translateX(0);} 50%{ transform: translateX(5px);} }
+
+  .strips-section { background: var(--cream); position: relative; }
+  .strips-section::before {
+    content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 38px, rgba(21,19,15,0.025) 38px, rgba(21,19,15,0.025) 39px);
+  }
+  .strips-section > * { position: relative; z-index: 1; }
+
+  /* ───── Promise trio ───── */
+  .promise { background: var(--sand); }
+  .promise-inner { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 4vw, 56px); }
+  @media (max-width: 760px) { .promise-inner { grid-template-columns: 1fr; } }
+  .promise-item .pno { font-family: var(--display); font-weight: 400; font-size: 30px; color: var(--clay); margin-bottom: 14px; display:block; line-height:1; }
+  .promise-item h4 { font-family: var(--display); font-weight: 400; font-size: 25px; margin-bottom: 10px; color: var(--green); }
+  .promise-item p { font-size: 14px; color: var(--ink-soft); line-height: 1.7; }
+
+  /* ───── Reviews ───── */
+  .reviews { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 880px) { .reviews { grid-template-columns: 1fr; } }
+  .review { background: var(--paper); border: 1px solid var(--line-soft); border-radius: 8px; padding: 28px; }
+  .review p { font-size: 15px; line-height: 1.65; margin-bottom: 18px; font-style: italic; }
+  .review-by { display: flex; align-items: center; gap: 12px; }
+  .review-by img { width: 44px; height: 44px; border-radius: 999px; object-fit: cover; background: var(--sand); }
+  .review-by .rb-name { font-weight: 600; font-size: 14px; }
+  .review-by .rb-meta { font-size: 12px; color: var(--ink-soft); }
+
+  /* ───── Footer ───── */
+  footer { background: var(--green); color: var(--cream); padding: clamp(52px, 7vw, 92px) clamp(18px, 4vw, 56px) 30px; }
+  .foot-grid { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: clamp(28px, 5vw, 72px); padding-bottom: 44px; border-bottom: 1px solid rgba(244,237,225,0.16); }
+  @media (max-width: 880px) { .foot-grid { grid-template-columns: 1fr 1fr; gap: 30px; } }
+  .foot-mark { font-family: var(--display); font-weight: 400; font-size: 32px; margin-bottom: 14px; display:flex; align-items:center; gap:10px; }
+  .foot-mark .mk { width: 15px; height: 15px; position: relative; display:inline-block; }
+  .foot-mark .mk::before { content:''; position:absolute; inset:0; border:2px solid var(--clay); border-radius:999px; }
+  .foot-mark .mk::after { content:''; position:absolute; left:50%; top:0; bottom:0; width:2px; background:var(--clay); transform:translateX(-50%); }
+  .foot-blurb { font-size: 13px; line-height: 1.7; color: rgba(244,237,225,0.62); max-width: 300px; }
+  .foot-h { font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--clay-soft); margin-bottom: 16px; font-weight: 600; }
+  .foot-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .foot-list a, .foot-list span { font-size: 13px; color: rgba(244,237,225,0.78); transition: color .2s; }
+  .foot-list a:hover { color: var(--cream); }
+  .foot-disc { max-width: 1320px; margin: 22px auto 0; font-size: 11px; color: rgba(244,237,225,0.5); line-height: 1.6; }
+  .foot-bottom { max-width: 1320px; margin: 16px auto 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 11px; color: rgba(244,237,225,0.5); letter-spacing: 0.04em; }
+
+  /* ───── Modal ───── */
+  .modal-bg { position: fixed; inset: 0; background: rgba(21,41,31,0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity .28s; z-index: 90; }
+  .modal-bg.open { opacity: 1; pointer-events: auto; }
+  .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, calc(-50% + 24px)); width: min(880px, calc(100vw - 32px)); max-height: calc(100vh - 64px); background: var(--paper); z-index: 91; opacity: 0; pointer-events: none; transition: transform .36s cubic-bezier(.2,.7,.2,1), opacity .28s; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; border-radius: 10px; }
+  .modal.open { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%); }
+  .modal-img { background: var(--sand); overflow: hidden; aspect-ratio: 1/1; }
+  .modal-img img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-info { padding: clamp(24px, 3.4vw, 42px); display: flex; flex-direction: column; overflow-y: auto; }
+  .modal-kind { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--clay); font-weight: 600; margin-bottom: 12px; }
+  .modal-name { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 3.6vw, 46px); line-height: 1.0; margin-bottom: 10px; color: var(--green); }
+  .modal-price { font-family: var(--display); font-weight: 400; font-size: 22px; margin-bottom: 20px; }
+  .modal-desc { font-size: 14px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+  .opt-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; margin-bottom: 12px; }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .opt-chip { padding: 11px 18px; border: 1px solid var(--line); background: transparent; font-size: 13px; font-weight: 500; border-radius: 4px; transition: all .18s; }
+  .opt-chip:hover { border-color: var(--clay); }
+  .opt-chip.selected { background: var(--clay); color: var(--cream); border-color: var(--clay); }
+  .modal-disc { font-size: 11px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 18px; }
+  .modal-add { background: var(--green); color: var(--cream); padding: 16px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; border-radius: 4px; margin-top: auto; transition: background .2s; }
+  .modal-add:hover { background: var(--clay); }
+  .modal-add:disabled { background: var(--line); color: var(--ink-soft); cursor: not-allowed; }
+  .modal-close { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 999px; background: var(--paper); display: flex; align-items: center; justify-content: center; z-index: 2; box-shadow: 0 2px 12px rgba(0,0,0,0.16); transition: transform .2s; }
+  .modal-close:hover { transform: rotate(90deg); }
+  @media (max-width: 760px) { .modal { grid-template-columns: 1fr; max-height: 92vh; overflow-y: auto; } .modal-img { aspect-ratio: 16/10; } }
+
+  /* ───── Cart drawer ───── */
+  .cart { position: fixed; top: 0; right: 0; width: min(440px, 92vw); height: 100vh; height: 100dvh; background: var(--cream); z-index: 92; transform: translateX(100%); transition: transform .36s cubic-bezier(.2,.7,.2,1); display: flex; flex-direction: column; box-shadow: -2px 0 28px rgba(0,0,0,0.14); }
+  .cart.open { transform: translateX(0); }
+  .cart-header { padding: 22px 24px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+  .cart-title { font-family: var(--display); font-weight: 400; font-size: 24px; color: var(--green); }
+  .cart-close { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+  .cart-close:hover { color: var(--ink); }
+  .cart-items { flex: 1; overflow-y: auto; padding: 4px 24px; }
+  .cart-empty { padding: 70px 0; text-align: center; color: var(--ink-soft); }
+  .cart-empty p { font-family: var(--display); font-weight: 400; font-size: 22px; margin-bottom: 10px; color: var(--green); }
+  .cart-empty span { font-size: 13px; }
+  .cart-line { display: grid; grid-template-columns: 70px 1fr; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--line-soft); }
+  .cart-line-img { width: 70px; height: 70px; border-radius: 6px; overflow: hidden; background: var(--sand); }
+  .cart-line-img img { width: 100%; height: 100%; object-fit: cover; }
+  .cart-line-info { display: flex; flex-direction: column; justify-content: space-between; }
+  .cart-line-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .cart-line-name { font-family: var(--display); font-weight: 400; font-size: 17px; line-height: 1.1; color: var(--green); }
+  .cart-line-meta { font-size: 11px; color: var(--ink-soft); margin-top: 3px; letter-spacing: 0.04em; }
+  .cart-line-price { font-weight: 600; font-size: 14px; white-space: nowrap; }
+  .cart-line-bottom { display: flex; justify-content: space-between; align-items: center; }
+  .qty { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+  .qty button { width: 26px; height: 26px; color: var(--ink); font-size: 16px; display: flex; align-items: center; justify-content: center; }
+  .qty button:hover { color: var(--clay); }
+  .qty span { padding: 0 8px; font-size: 13px; min-width: 18px; text-align: center; }
+  .cart-remove { font-size: 11px; letter-spacing: 0.06em; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }
+  .cart-remove:hover { color: var(--error); }
+  .cart-foot { border-top: 1px solid var(--line); padding: 18px 24px 24px; background: var(--paper); }
+  .total-line { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0 14px; }
+  .total-line .tl { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); }
+  .total-line .tv { font-family: var(--display); font-weight: 400; font-size: 30px; }
+  .cart-checkout { width: 100%; background: var(--clay); color: var(--cream); padding: 17px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; text-align: center; display: block; border-radius: 4px; transition: background .2s; }
+  .cart-checkout:hover { background: var(--clay-deep); }
+  .cart-hint { font-size: 11px; color: var(--ink-soft); text-align: center; margin-top: 12px; line-height: 1.6; }
+
+  /* ───── Toast ───── */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(40px); background: var(--green); color: var(--cream); padding: 14px 22px; font-size: 13px; font-weight: 500; z-index: 100; opacity: 0; pointer-events: none; transition: opacity .24s, transform .36s cubic-bezier(.2,.7,.2,1); border-radius: 6px; display:flex; align-items:center; gap:10px; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast .ok { width: 18px; height: 18px; border-radius: 999px; background: var(--clay); color: var(--cream); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
+
+  /* ───── Reveal ───── */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: none; opacity: 1; transform: none; }
+    .strip-hint .arrow { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="b-help">Need Help? <a href="tel:1231231234">📞 123-123-1234</a></div>
+<div class="b-loud">
+  <div class="b-loud-track">
+    <span class="loud-msg active"><span class="ball"></span>Free Shipping on Orders Over $100</span>
+    <span class="loud-msg"><span class="ball"></span>Circulation 3 Bottles: $240, That's $80 a Bottle</span>
+    <span class="loud-msg"><span class="ball"></span>The Clubhouse Kit Has Landed</span>
+    <span class="loud-msg"><span class="ball"></span>Code DEU10 for 10% Off at Checkout</span>
+    <span class="loud-msg"><span class="ball"></span>30-Day Returns on Every Order</span>
+  </div>
+</div>
+<div class="b-info">
+  <div class="b-info-track">
+    <span>Free Shipping Over $100</span><span class="dot">·</span>
+    <span>30-Day Returns</span><span class="dot">·</span>
+    <span>US Shipping</span><span class="dot">·</span>
+    <span>Secure Checkout</span>
+  </div>
+</div>
+
+<header class="nav">
+  <a href="#" class="wordmark"><span class="mk"></span>Deuce</a>
+  <nav class="navlinks">
+    <a href="#circulation">Circulation</a>
+    <a href="#oncourt">On Court</a>
+    <a href="#promise">The Clubhouse</a>
+    <a href="checkout.html">Bag</a>
+  </nav>
+  <button class="bag-btn" id="bagOpen" aria-label="Open bag">
+    <span>Bag</span><span class="bag-count empty" id="bagCount">0</span>
+  </button>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <!-- Lifestyle photo sourced via Openverse public API; attribution in build log -->
+  <img src="images/hero.jpg" alt="Tennis player on court during a match" loading="eager">
+  <div class="hero-inner">
+    <span class="hero-eyebrow">Tennis Gear &amp; Circulation Support</span>
+    <h1>Play the<br><span class="line2">long match.</span></h1>
+    <p>A composed, honest kit for the player who keeps showing up: the grips, dampeners, and towels that get you on court, plus Circulation, our blood-flow support for the third set.</p>
+    <div class="hero-cta">
+      <a href="#circulation" class="btn btn-primary">Meet Circulation</a>
+      <a href="#oncourt" class="btn btn-ghost">Shop On Court</a>
+    </div>
+  </div>
+</section>
+
+<!-- CIRCULATION SPOTLIGHT -->
+<section class="spotlight" id="circulation">
+  <div class="spot-grid">
+    <div class="spot-imgwrap reveal">
+      <!-- Studio product render generated via fal.ai (flux/schnell), no trademark, blank label -->
+      <img src="images/circulation.png" alt="Circulation blood-flow support supplement bottle">
+    </div>
+    <div class="reveal">
+      <span class="spot-kicker">The Featured Formula</span>
+      <h2 class="spot-title">Circulation</h2>
+      <p class="spot-lead">A blood-flow supplement built for the back half of a long match. Supports circulation, leg freshness, and stamina across long matches and third sets.</p>
+      <ul class="spot-benefits">
+        <li>Supports healthy circulation and blood flow</li>
+        <li>Supports leg freshness across long matches and third sets</li>
+        <li>Supports stamina and an easier warm-up between games</li>
+      </ul>
+      <p class="spot-ing"><strong>Inside:</strong> L-Citrulline · Beetroot Extract · Ginkgo Biloba · Cayenne · Vitamin B12.</p>
+      <div class="spot-buy">
+        <div class="spot-price" id="spotPrice">$240 <span>/ 3 bottles</span></div>
+      </div>
+      <div class="spot-actions" id="spotTiers" style="margin-top:18px;">
+        <button class="btn btn-pack" data-tier="1">1 Bottle, $149</button>
+        <button class="btn btn-pack" data-tier="2">2 Bottles, $180</button>
+        <button class="btn btn-primary" data-tier="3">3 Bottles, $240</button>
+      </div>
+      <div class="spot-actions" style="margin-top:14px;">
+        <button class="btn btn-primary" id="spotAdd">Add 3 Bottles, $240</button>
+      </div>
+      <p class="spot-disc">A dietary supplement. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before use, especially if pregnant, nursing, or taking medication.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ON-COURT FILMSTRIP -->
+<section class="section strips-section" id="oncourt">
+  <div class="sec-head">
+    <div>
+      <p class="sec-kicker">The Kit · On the Court</p>
+      <h2 class="sec-title">On Court</h2>
+    </div>
+    <div class="strip-hint">Scroll <span class="arrow">→</span></div>
+  </div>
+  <div class="strip-wrap">
+    <div class="strip" id="stripCourt"></div>
+  </div>
+</section>
+
+<!-- PROMISE TRIO -->
+<section class="section promise" id="promise">
+  <div class="sec-head" style="margin-bottom: clamp(28px,4vw,44px);">
+    <div>
+      <p class="sec-kicker">The Clubhouse</p>
+      <h2 class="sec-title">Quiet quality, no theatrics.</h2>
+    </div>
+  </div>
+  <div class="promise-inner">
+    <div class="promise-item reveal">
+      <span class="pno">I</span>
+      <h4>A short, considered kit</h4>
+      <p>We stock what a player actually reaches for: grips, dampeners, wristbands, socks, a towel, a bag, a visor. No filler, no fifty colorways you will never buy.</p>
+    </div>
+    <div class="promise-item reveal">
+      <span class="pno">II</span>
+      <h4>Honest about Circulation</h4>
+      <p>Circulation is a supplement, not a promise. We name every ingredient, we print no dosages we cannot stand behind, and we never claim it treats disease.</p>
+    </div>
+    <div class="promise-item reveal">
+      <span class="pno">III</span>
+      <h4>Easy to live with</h4>
+      <p>Free US shipping over $100, a flat $7.99 below it, and 30 days to send anything back. Questions reach a person at help@deuce.com.</p>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="section">
+  <div class="sec-head">
+    <div>
+      <p class="sec-kicker">From the baseline</p>
+      <h2 class="sec-title">Player notes</h2>
+    </div>
+    <p class="sec-note">A few notes from players who shop the kit. Shared with permission.</p>
+  </div>
+  <div class="reviews">
+    <div class="review reveal">
+      <p>"The overgrip is the one I keep coming back to. Tacky without being sticky, and it holds up through a few weeks of league play."</p>
+      <div class="review-by">
+        <!-- Headshot sourced via Openverse public API; attribution in build log -->
+        <img src="images/face1.jpg" alt="Player headshot">
+        <div><div class="rb-name">Marcus T.</div><div class="rb-meta">Verified buyer</div></div>
+      </div>
+    </div>
+    <div class="review reveal">
+      <p>"I take Circulation before our Saturday doubles. I won't make big claims, but my legs feel fresher into the later sets. Easy to add to the morning."</p>
+      <div class="review-by">
+        <img src="images/face2.jpg" alt="Player headshot">
+        <div><div class="rb-name">Dana R.</div><div class="rb-meta">Verified buyer</div></div>
+      </div>
+    </div>
+    <div class="review reveal">
+      <p>"The racket bag holds two frames, a towel, balls and my keys. It lives in the car now. Simple, well made, and it does the job."</p>
+      <div class="review-by">
+        <img src="images/face3.jpg" alt="Player headshot">
+        <div><div class="rb-name">Priya S.</div><div class="rb-meta">Verified buyer</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <div class="foot-mark"><span class="mk"></span>Deuce</div>
+      <p class="foot-blurb">A clubhouse tennis shop. A short, honest kit and Circulation, our blood-flow support for the long match. Free US shipping over $100.</p>
+    </div>
+    <div>
+      <p class="foot-h">Shop</p>
+      <ul class="foot-list">
+        <li><a href="#circulation">Circulation</a></li>
+        <li><a href="#oncourt">On Court</a></li>
+        <li><a href="#promise">The Clubhouse</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="foot-h">Help</p>
+      <ul class="foot-list">
+        <li><a href="shipping.html">Shipping</a></li>
+        <li><a href="returns.html">Returns</a></li>
+        <li><a href="mailto:help@deuce.com">Contact</a></li>
+        <li><a href="tel:1231231234">123-123-1234</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="foot-h">Legal</p>
+      <ul class="foot-list">
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="foot-disc">These statements have not been evaluated by the Food and Drug Administration. Circulation is a dietary supplement and is not intended to diagnose, treat, cure, or prevent any disease.</p>
+  <div class="foot-bottom">
+    <span>© <span id="year"></span> PLACEHOLDER LLC</span>
+    <span>123 Main Street, Placeholder, State 10101</span>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <button class="modal-close" id="modalClose" aria-label="Close">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.6"/></svg>
+  </button>
+  <div class="modal-img"><img id="modalImg" alt=""></div>
+  <div class="modal-info">
+    <div class="modal-kind" id="modalKind"></div>
+    <h3 class="modal-name" id="modalName"></h3>
+    <div class="modal-price" id="modalPrice"></div>
+    <p class="modal-desc" id="modalDesc"></p>
+    <div id="optWrap" hidden>
+      <div class="opt-label" id="optLabel">Size</div>
+      <div class="opts" id="opts"></div>
+    </div>
+    <p class="modal-disc" id="modalDisc" hidden></p>
+    <button class="modal-add" id="modalAdd">Add to Bag</button>
+  </div>
+</div>
+
+<!-- CART -->
+<aside class="cart" id="cart" aria-hidden="true">
+  <div class="cart-header">
+    <h3 class="cart-title">Your Bag</h3>
+    <button class="cart-close" id="cartClose">Close</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-foot" id="cartFoot" hidden>
+    <div class="total-line"><span class="tl">Subtotal</span><span class="tv" id="cartTotal">$0</span></div>
+    <a href="checkout.html" class="cart-checkout">Checkout</a>
+    <p class="cart-hint">Shipping and tax calculated at checkout. Free US shipping over $100.</p>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PRODUCTS = [
+  { slug:'circulation', cat:'supplement', kind:'Blood Flow & Circulation', name:'Circulation', price:240.00, img:'circulation.png', supplement:true,
+    desc:'A blood-flow supplement built around the demands of tennis. Supports circulation, leg freshness, and stamina across long matches and third sets. Inside: L-Citrulline, Beetroot Extract, Ginkgo Biloba, Cayenne, and Vitamin B12. A dietary supplement. These statements have not been evaluated by the Food and Drug Administration. Not intended to diagnose, treat, cure, or prevent any disease.' },
+
+  // On-court gear
+  { slug:'grip', cat:'gear', kind:'Overgrip 3-Pack', name:'Cushioned Overgrip', price:12.99, img:'grip.png',
+    desc:'A three-pack of cushioned overgrips that wrap your racket handle for a tackier, more comfortable hold. Soft feel, sweat-friendly surface, three rolls per pack. One size.' },
+  { slug:'dampener', cat:'gear', kind:'Dampener Set', name:'Vibration Dampener Set', price:9.99, img:'dampener.png',
+    desc:'A set of soft rubber string dampeners that quiet the ping of ball on strings and take the buzz out of contact. Press between the mains near the throat. One size.' },
+  { slug:'wristband', cat:'gear', kind:'Wristband Pair', name:'Performance Wristband Pair', price:11.99, img:'wristband.png',
+    desc:'A pair of terry wristbands that catch sweat before it reaches your grip. Soft, stretchy, and quick to rinse. Sold as a pair. One size.' },
+  { slug:'socks', cat:'gear', kind:'Crew Socks', name:'Court Crew Socks', price:14.99, img:'socks.png',
+    desc:'Cushioned crew socks with a reinforced heel and toe and a breathable mid-foot. A stay-up cuff for long matches. Choose your size below.' },
+  { slug:'towel', cat:'gear', kind:'Court Towel', name:'Microfiber Court Towel', price:16.99, img:'towel.png',
+    desc:'A quick-drying microfiber towel that packs small and dries fast between games. Folds into a side pocket without soaking your bag. One size.' },
+  { slug:'bag', cat:'gear', kind:'Racket Bag', name:'Tennis Racket Bag', price:44.99, img:'bag.png',
+    desc:'A structured racket bag with room for a couple of frames, a towel, balls, a bottle, and your keys. Padded main compartment and an outside zip pocket. One size.' },
+  { slug:'visor', cat:'gear', kind:'Sun Visor', name:'Sun Visor', price:18.99, img:'visor.png',
+    desc:'A lightweight sun visor that keeps glare off your eyes and sweat off your brow without trapping heat like a full cap. Adjustable back. One size.' },
+];
+
+const PRODUCTS_INDEX = Object.fromEntries(PRODUCTS.map(p => [p.slug, p]));
+// Supplement pricing tiers for Circulation.
+const SUPP_TIERS = [
+  { id:'1', label:'1 Bottle',  price:149.00 },
+  { id:'2', label:'2 Bottles', price:180.00 },
+  { id:'3', label:'3 Bottles', price:240.00 },
+];
+const SUPP_DEFAULT = '3';
+const VARIANTS = {
+  socks: { label: 'Size', options: ['S/M', 'L/XL'] },
+  circulation: { label: 'Supply', tiers: SUPP_TIERS, defaultId: SUPP_DEFAULT },
+};
+const STORAGE_KEY = 'deuce_cart';
+
+function loadCart() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; } }
+function saveCart(c) { localStorage.setItem(STORAGE_KEY, JSON.stringify(c)); }
+let cart = loadCart();
+
+function fmt(n) { return '$' + n.toFixed(2).replace(/\.00$/, ''); }
+function cartTotal(c) { return c.reduce((s, l) => s + l.price * l.qty, 0); }
+
+// ─── Filmstrips ───
+function cardHTML(p) {
+  return `
+  <article class="pcard" data-slug="${p.slug}">
+    <div class="pcard-img">
+      <img src="images/${p.img}" alt="${p.name}" loading="lazy">
+      <span class="pcard-tag">${p.kind}</span>
+      <button class="pcard-add" type="button" data-quick="${p.slug}" aria-label="Quick add ${p.name}">+</button>
+    </div>
+    <div class="pcard-body">
+      <span class="pcard-kind">${p.kind}</span>
+      <h3 class="pcard-name">${p.name}</h3>
+      <p class="pcard-desc">${p.desc.split('.')[0]}.</p>
+      <div class="pcard-price">${fmt(p.price)}</div>
+    </div>
+  </article>`;
+}
+function renderStrips() {
+  document.getElementById('stripCourt').innerHTML = PRODUCTS.filter(p => p.cat === 'gear').map(cardHTML).join('');
+  document.querySelectorAll('.pcard').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('[data-quick]')) return;
+      openModal(card.dataset.slug);
+    });
+  });
+  document.querySelectorAll('[data-quick]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const p = PRODUCTS_INDEX[btn.dataset.quick];
+      if (VARIANTS[p.slug]) { openModal(p.slug); return; }
+      addToCart(p, null);
+      toast(`${p.name} added`);
+    });
+  });
+}
+
+// ─── Modal ───
+let modalProduct = null, modalOpt = null, modalTier = null;
+function openModal(slug) {
+  const p = PRODUCTS_INDEX[slug];
+  if (!p) return;
+  modalProduct = p; modalOpt = null; modalTier = null;
+  document.getElementById('modalImg').src = `images/${p.img}`;
+  document.getElementById('modalImg').alt = p.name;
+  document.getElementById('modalKind').textContent = p.kind;
+  document.getElementById('modalName').textContent = p.name;
+  document.getElementById('modalPrice').textContent = fmt(p.price);
+  document.getElementById('modalDesc').textContent = p.desc;
+  const disc = document.getElementById('modalDisc');
+  if (p.supplement) { disc.hidden = false; disc.textContent = 'These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.'; }
+  else { disc.hidden = true; }
+  const optWrap = document.getElementById('optWrap');
+  const opts = document.getElementById('opts');
+  const add = document.getElementById('modalAdd');
+  const v = VARIANTS[p.slug];
+  if (v && v.tiers) {
+    optWrap.hidden = false;
+    document.getElementById('optLabel').textContent = v.label;
+    opts.innerHTML = v.tiers.map(t => `<button class="opt-chip" data-tier="${t.id}">${t.label} · ${fmt(t.price)}</button>`).join('');
+    const selectTier = (t, chip) => {
+      opts.querySelectorAll('.opt-chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      modalOpt = t.label;
+      modalTier = t;
+      document.getElementById('modalPrice').textContent = fmt(t.price);
+      add.disabled = false;
+      add.textContent = `Add ${t.label}, ${fmt(t.price)}`;
+    };
+    opts.querySelectorAll('.opt-chip').forEach(chip => {
+      const t = v.tiers.find(x => x.id === chip.dataset.tier);
+      chip.addEventListener('click', () => selectTier(t, chip));
+    });
+    const defChip = opts.querySelector(`.opt-chip[data-tier="${v.defaultId}"]`);
+    const defTier = v.tiers.find(x => x.id === v.defaultId);
+    if (defChip && defTier) selectTier(defTier, defChip);
+  } else if (v) {
+    optWrap.hidden = false;
+    document.getElementById('optLabel').textContent = v.label;
+    opts.innerHTML = v.options.map(o => `<button class="opt-chip" data-opt="${o}">${o}</button>`).join('');
+    opts.querySelectorAll('.opt-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        opts.querySelectorAll('.opt-chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        modalOpt = chip.dataset.opt;
+        add.disabled = false;
+        add.textContent = `Add ${p.name}, ${modalOpt}`;
+      });
+    });
+    add.disabled = true;
+    add.textContent = `Select ${v.label}`;
+  } else {
+    optWrap.hidden = true;
+    add.disabled = false;
+    add.textContent = `Add to Bag, ${fmt(p.price)}`;
+  }
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('modalBg').classList.add('open');
+  document.getElementById('modal').setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('modalBg').classList.remove('open');
+  document.getElementById('modal').setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalBg').addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeCart(); } });
+document.getElementById('modalAdd').addEventListener('click', () => {
+  if (!modalProduct) return;
+  if (VARIANTS[modalProduct.slug] && !modalOpt) return;
+  addToCart(modalProduct, modalOpt, modalTier ? modalTier.price : null);
+  closeModal();
+  toast(`${modalProduct.name}${modalOpt ? ' · ' + modalOpt : ''} added`);
+});
+
+// ─── Spotlight supplement tier selector ───
+(function() {
+  const tierWrap = document.getElementById('spotTiers');
+  const priceEl = document.getElementById('spotPrice');
+  const addBtn = document.getElementById('spotAdd');
+  if (!tierWrap || !addBtn) return;
+  let chosen = SUPP_TIERS.find(t => t.id === SUPP_DEFAULT);
+  function paint() {
+    tierWrap.querySelectorAll('[data-tier]').forEach(b => {
+      const on = b.dataset.tier === chosen.id;
+      b.classList.toggle('btn-primary', on);
+      b.classList.toggle('btn-pack', !on);
+    });
+    priceEl.innerHTML = `${fmt(chosen.price)} <span>/ ${chosen.label.toLowerCase()}</span>`;
+    addBtn.textContent = `Add ${chosen.label}, ${fmt(chosen.price)}`;
+  }
+  tierWrap.querySelectorAll('[data-tier]').forEach(b => {
+    b.addEventListener('click', () => {
+      chosen = SUPP_TIERS.find(t => t.id === b.dataset.tier);
+      paint();
+    });
+  });
+  addBtn.addEventListener('click', () => {
+    const p = PRODUCTS_INDEX['circulation'];
+    addToCart(p, chosen.label, chosen.price);
+    toast(`${p.name} · ${chosen.label} added`);
+  });
+  paint();
+})();
+
+// ─── Cart ───
+function addToCart(p, opt, priceOverride) {
+  const price = (priceOverride != null) ? priceOverride : p.price;
+  const existing = cart.find(l => l.slug === p.slug && l.opt === (opt || null));
+  if (existing) existing.qty += 1;
+  else cart.push({ slug: p.slug, name: p.name, price: price, opt: opt || null, qty: 1 });
+  saveCart(cart); renderCart(); openCart();
+}
+function removeLine(slug, opt) { cart = cart.filter(l => !(l.slug === slug && l.opt === opt)); saveCart(cart); renderCart(); }
+function changeQty(slug, opt, d) {
+  const l = cart.find(x => x.slug === slug && x.opt === opt);
+  if (!l) return;
+  l.qty = Math.max(0, l.qty + d);
+  if (l.qty === 0) cart = cart.filter(x => !(x.slug === slug && x.opt === opt));
+  saveCart(cart); renderCart();
+}
+function renderCart() {
+  const items = document.getElementById('cartItems');
+  const foot = document.getElementById('cartFoot');
+  const count = cart.reduce((s, l) => s + l.qty, 0);
+  const cc = document.getElementById('bagCount');
+  cc.textContent = count; cc.classList.toggle('empty', count === 0);
+  if (cart.length === 0) {
+    items.innerHTML = `<div class="cart-empty"><p>Your bag is empty.</p><span>Pick up a grip and get on court.</span></div>`;
+    foot.hidden = true; return;
+  }
+  items.innerHTML = cart.map(l => {
+    const p = PRODUCTS_INDEX[l.slug];
+    const meta = l.opt ? l.opt : (p ? p.kind : '');
+    return `
+    <div class="cart-line">
+      <div class="cart-line-img"><img src="images/${p ? p.img : ''}" alt="${l.name}"></div>
+      <div class="cart-line-info">
+        <div class="cart-line-top">
+          <div><div class="cart-line-name">${l.name}</div><div class="cart-line-meta">${meta}</div></div>
+          <div class="cart-line-price">${fmt(l.price * l.qty)}</div>
+        </div>
+        <div class="cart-line-bottom">
+          <div class="qty">
+            <button data-act="dec" data-slug="${l.slug}" data-opt="${l.opt || ''}">−</button>
+            <span>${l.qty}</span>
+            <button data-act="inc" data-slug="${l.slug}" data-opt="${l.opt || ''}">+</button>
+          </div>
+          <button class="cart-remove" data-act="rem" data-slug="${l.slug}" data-opt="${l.opt || ''}">Remove</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  items.querySelectorAll('button[data-act]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const opt = btn.dataset.opt || null;
+      if (btn.dataset.act === 'inc') changeQty(btn.dataset.slug, opt, +1);
+      if (btn.dataset.act === 'dec') changeQty(btn.dataset.slug, opt, -1);
+      if (btn.dataset.act === 'rem') removeLine(btn.dataset.slug, opt);
+    });
+  });
+  document.getElementById('cartTotal').textContent = fmt(cartTotal(cart));
+  foot.hidden = false;
+}
+function openCart() { document.getElementById('cart').classList.add('open'); document.getElementById('cart').setAttribute('aria-hidden', 'false'); }
+function closeCart() { document.getElementById('cart').classList.remove('open'); document.getElementById('cart').setAttribute('aria-hidden', 'true'); }
+document.getElementById('bagOpen').addEventListener('click', openCart);
+document.getElementById('cartClose').addEventListener('click', closeCart);
+
+// ─── Toast ───
+let toastT;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<span class="ok">✓</span>${msg}`;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ─── Reveal ───
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+}, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ─── Loud banner rotation ───
+(function() {
+  const msgs = document.querySelectorAll('.loud-msg');
+  if (msgs.length < 2) return;
+  let i = 0;
+  setInterval(() => { msgs[i].classList.remove('active'); i = (i + 1) % msgs.length; msgs[i].classList.add('active'); }, 3200);
+})();
+
+// ─── Init ───
+document.getElementById('year').textContent = new Date().getFullYear();
+renderStrips();
+renderCart();
+</script>
+</body>
+</html>
