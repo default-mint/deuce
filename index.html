@@ -543,7 +543,7 @@
     <div class="feat-banner">
       <div class="feat-figure reveal">
         <!-- Studio product render generated via fal.ai (flux/schnell), no trademark, blank label -->
-        <img src="images/circulation.png" alt="Pulse blood-flow support supplement bottle">
+        <img id="spotImg" src="images/pulse-3.png" alt="Pulse blood-flow support supplement bottle, 3 bottle bundle">
       </div>
       <div class="reveal">
         <p class="feat-kicker">The Feature · The Formula</p>
@@ -686,7 +686,7 @@
 
 <script>
 const PRODUCTS = [
-  { slug:'circulation', cat:'supplement', kind:'Blood Flow & Circulation', name:'Pulse', price:240.00, img:'circulation.png', supplement:true,
+  { slug:'circulation', cat:'supplement', kind:'Blood Flow & Circulation', name:'Pulse', price:240.00, img:'pulse-1.png', supplement:true,
     desc:'A blood-flow supplement built around the demands of tennis. Supports circulation, leg freshness, and stamina across long matches and third sets. Inside: L-Citrulline, Beetroot Extract, Ginkgo Biloba, Cayenne, and Vitamin B12. A dietary supplement. These statements have not been evaluated by the Food and Drug Administration. Not intended to diagnose, treat, cure, or prevent any disease.' },
 
   // On-court gear
@@ -860,6 +860,7 @@ document.getElementById('modalAdd').addEventListener('click', () => {
   const tierWrap = document.getElementById('spotTiers');
   const priceEl = document.getElementById('spotPrice');
   const addBtn = document.getElementById('spotAdd');
+  const imgEl = document.getElementById('spotImg');
   if (!tierWrap || !addBtn) return;
   let chosen = SUPP_TIERS.find(t => t.id === SUPP_DEFAULT);
   function paint() {
@@ -868,6 +869,7 @@ document.getElementById('modalAdd').addEventListener('click', () => {
       b.classList.toggle('btn-primary', on);
       b.classList.toggle('btn-pack', !on);
     });
+    if (imgEl) imgEl.src = `images/pulse-${chosen.id}.png`;
     priceEl.innerHTML = `${fmt(chosen.price)} <span>/ ${chosen.label.toLowerCase()}</span>`;
     addBtn.textContent = `Add ${chosen.label}, ${fmt(chosen.price)}`;
   }
